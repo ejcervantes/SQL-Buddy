@@ -3,32 +3,20 @@ from typing import List, Dict, Any
 from langchain_openai import ChatOpenAI
 from langchain.schema import Document
 from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.vectorstores import Chroma
+from langchain.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from app.config import settings
 
-class RAGServiceSimple:
+class RAGServiceMemory:
     def __init__(self):
-        # Usar OpenAI embeddings en lugar de HuggingFace
+        # Usar OpenAI embeddings
         self.embeddings = OpenAIEmbeddings(
             openai_api_key=settings.OPENAI_API_KEY
         )
         
-        # Usar nueva sintaxis de ChromaDB
-        try:
-            self.vector_store = Chroma(
-                persist_directory=settings.CHROMA_PERSIST_DIRECTORY,
-                embedding_function=self.embeddings,
-                collection_name="sql_tables"
-            )
-        except Exception as e:
-            print(f"⚠️  Error inicializando ChromaDB: {e}")
-            print("🔄 Intentando con configuración alternativa...")
-            # Configuración alternativa más simple
-            self.vector_store = Chroma(
-                embedding_function=self.embeddings,
-                collection_name="sql_tables"
-            )
+        # Usar FAISS en memoria en lugar de ChromaDB
+        self.vector_store = None
+        self.documents = []
         
         self.llm = ChatOpenAI(
             openai_api_key=settings.OPENAI_API_KEY,
@@ -42,7 +30,7 @@ class RAGServiceSimple:
 
     def add_table_metadata(self, table_name: str, schema_info: str, description: str) -> bool:
         """
-        Añade metadatos de una tabla a la base vectorial
+        Añade metadatos de una tabla a la base vectorial en memoria
         """
         try:
             content = f"Tabla: {table_name}\nEsquema: {schema_info}\nDescripción: {description}"
@@ -62,7 +50,16 @@ class RAGServiceSimple:
                 )
                 documents.append(doc)
             
-            self.vector_store.add_documents(documents)
+            # Añadir a la lista de documentos
+            self.documents.extend(documents)
+            
+            # Recrear el vector store con todos los documentos
+            if self.documents:
+                self.vector_store = FAISS.from_documents(
+                    self.documents, 
+                    self.embeddings
+                )
+            
             print(f"✅ Metadatos de tabla '{table_name}' añadidos a la base vectorial")
             return True
             
@@ -75,6 +72,9 @@ class RAGServiceSimple:
         Busca tablas relevantes basándose en la pregunta del usuario
         """
         try:
+            if not self.vector_store:
+                return []
+            
             results = self.vector_store.similarity_search_with_score(
                 question, 
                 k=top_k

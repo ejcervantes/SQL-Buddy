@@ -7,7 +7,7 @@ from typing import Dict, Any, Optional
 import uvicorn
 
 from app.config import settings
-from app.services.rag_simple import RAGServiceSimple
+from app.services.rag_memory import RAGServiceMemory
 from app.services.sql_generator import SQLGeneratorService
 
 # Inicializar FastAPI
@@ -41,7 +41,7 @@ class SQLResponse(BaseModel):
     optimization: str
 
 # Inicializar servicios
-rag_service = RAGServiceSimple()
+rag_service = RAGServiceMemory()
 sql_generator = SQLGeneratorService(rag_service)
 
 @app.on_event("startup")
