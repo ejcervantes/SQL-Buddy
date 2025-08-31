@@ -1,9 +1,9 @@
 import os
 from typing import List, Dict, Any
 from langchain_openai import ChatOpenAI
-from langchain_community.schema import Document
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import Chroma
+from langchain.schema import Document
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.vectorstores import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from app.config import settings
 

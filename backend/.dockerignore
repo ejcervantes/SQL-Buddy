@@ -62,7 +62,8 @@ runtime.txt
 start.sh
 build.sh
 
-# Mantener requirements-ultra-stable.txt pero excluir requirements.txt conflictivo
+# Mantener requirements-legacy.txt pero excluir requirements.txt conflictivo
 requirements.txt
 requirements-minimal.txt
 requirements-stable.txt
+requirements-ultra-stable.txt
