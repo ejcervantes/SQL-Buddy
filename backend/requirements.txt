@@ -2,7 +2,8 @@ fastapi==0.104.1
 uvicorn[standard]==0.24.0
 langchain==0.2.0
 langchain-openai==0.0.5
-chromadb==0.4.22
+chromadb==0.4.15
+chroma-hnswlib==0.7.0
 requests==2.32.3
 pydantic==2.6.4
 python-dotenv==1.0.0
