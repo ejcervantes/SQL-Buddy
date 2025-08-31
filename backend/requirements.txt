@@ -7,3 +7,5 @@ requests==2.31.0
 pydantic==2.5.0
 python-dotenv==1.0.0
 python-multipart==0.0.6
+# Forzar versión pre-compilada de chromadb
+--only-binary=all
