@@ -1,0 +1,360 @@
+/* Estilos para el componente ResultCard */
+
+.result-card {
+  max-width: 900px;
+  margin: 2rem auto;
+  background: var(--background-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  animation: slideIn 0.4s ease-out;
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  gap: 1rem;
+}
+
+.result-question {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.question-icon {
+  font-size: 1.5rem;
+  margin-top: 0.25rem;
+}
+
+.question-text {
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.new-query-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: var(--radius-md);
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.new-query-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.button-icon {
+  font-size: 1rem;
+}
+
+.result-tabs {
+  display: flex;
+  background: var(--background-card);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tab-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--text-secondary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-button:hover {
+  background: rgba(102, 126, 234, 0.1);
+  color: var(--primary-color);
+}
+
+.tab-button.active {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+  background: rgba(102, 126, 234, 0.05);
+}
+
+.tab-icon {
+  font-size: 1.1rem;
+}
+
+.tab-content {
+  padding: 2rem;
+  min-height: 300px;
+}
+
+.content-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Contenido SQL */
+.sql-content {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.sql-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.copy-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--primary-color);
+  border: none;
+  border-radius: var(--radius-md);
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.copy-button:hover {
+  background: var(--secondary-color);
+  transform: translateY(-1px);
+}
+
+.copy-button.copied {
+  background: #38a169;
+}
+
+.copy-icon {
+  font-size: 0.9rem;
+}
+
+.sql-code {
+  background: #1a202c;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.sql-pre {
+  margin: 0;
+  padding: 1.5rem;
+  overflow-x: auto;
+  font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #e2e8f0;
+}
+
+.sql-code-content {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+}
+
+.sql-keyword {
+  color: #63b3ed;
+  font-weight: 600;
+}
+
+/* Contenido de explicación y optimización */
+.explanation-content,
+.optimization-content {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.content-text {
+  background: var(--background-card);
+  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--primary-color);
+}
+
+.content-text p {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+/* Footer del resultado */
+.result-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  background: var(--background-card);
+  border-top: 1px solid var(--border-color);
+  gap: 1rem;
+}
+
+.result-meta {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-light);
+}
+
+.meta-icon {
+  font-size: 1rem;
+}
+
+.result-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--background-light);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+.action-button:hover {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  transform: translateY(-1px);
+}
+
+.action-button.secondary {
+  background: transparent;
+}
+
+.action-icon {
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .result-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .result-question {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .question-text {
+    font-size: 1rem;
+  }
+  
+  .new-query-button {
+    align-self: flex-end;
+  }
+  
+  .result-tabs {
+    flex-wrap: wrap;
+  }
+  
+  .tab-button {
+    min-width: 120px;
+    font-size: 0.9rem;
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .tab-content {
+    padding: 1.5rem;
+  }
+  
+  .sql-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .copy-button {
+    align-self: flex-end;
+  }
+  
+  .result-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .result-meta {
+    justify-content: center;
+  }
+  
+  .result-actions {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .result-card {
+    margin: 1rem;
+  }
+  
+  .result-header {
+    padding: 1rem;
+  }
+  
+  .tab-content {
+    padding: 1rem;
+  }
+  
+  .sql-pre {
+    padding: 1rem;
+    font-size: 0.8rem;
+  }
+  
+  .result-tabs {
+    flex-direction: column;
+  }
+  
+  .tab-button {
+    min-width: auto;
+  }
+}
