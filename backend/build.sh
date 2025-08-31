@@ -6,16 +6,9 @@ echo "🚀 Iniciando build del backend..."
 # Actualizar pip
 pip install --upgrade pip
 
-# Instalar dependencias del sistema necesarias
-apt-get update -qq
-apt-get install -y --no-install-recommends \
-    build-essential \
-    python3-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# Instalar dependencias de Python con flags específicos
+# Instalar dependencias de Python
 echo "📦 Instalando dependencias de Python..."
-pip install --no-cache-dir --only-binary=all -r requirements.txt
+pip install --no-cache-dir -r requirements.txt
 
 # Verificar instalación
 echo "✅ Verificando instalación..."
