@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copiar requirements primero para mejor caching
-COPY requirements-compatible.txt requirements.txt
+COPY requirements-ultra-compatible.txt requirements.txt
 
 # Instalar dependencias de Python
 RUN pip install --no-cache-dir --upgrade pip && \
