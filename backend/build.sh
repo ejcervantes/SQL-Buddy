@@ -16,6 +16,7 @@ apt-get install -y --no-install-recommends \
 # Instalar dependencias de Python con flags específicos
 echo "📦 Instalando dependencias de Python..."
 pip install --no-cache-dir --only-binary=all -r requirements.txt
+pip install --only-binary=:all: -r requirements.txt
 
 # Verificar instalación
 echo "✅ Verificando instalación..."
