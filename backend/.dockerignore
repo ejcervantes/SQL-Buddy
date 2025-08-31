@@ -19,7 +19,6 @@ nosetests.xml
 coverage.xml
 *.cover
 *.log
-.git
 .mypy_cache
 .pytest_cache
 .hypothesis
@@ -52,12 +51,9 @@ chroma_db_*/
 Thumbs.db
 
 # Docker
-Dockerfile*
+Dockerfile.render
 docker-compose*
 .dockerignore
-
-# Excluir archivos de requirements conflictivos
-requirements.txt
 
 # Render
 render.yaml
@@ -65,3 +61,6 @@ Procfile
 runtime.txt
 start.sh
 build.sh
+
+# Mantener requirements-minimal.txt pero excluir requirements.txt conflictivo
+requirements.txt
