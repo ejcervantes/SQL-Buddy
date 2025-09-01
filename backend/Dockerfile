@@ -1,29 +1,29 @@
-FROM python:3.11-slim
+# Etapa 1: Usar una imagen base de Python moderna y ligera
+FROM python:3.11-slim as base
 
-# Instalar dependencias del sistema
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    python3-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Evitar que Python escriba archivos .pyc
+ENV PYTHONDONTWRITEBYTECODE 1
+# Asegurar que la salida de Python no se almacene en búfer
+ENV PYTHONUNBUFFERED 1
 
-# Establecer directorio de trabajo
+# Establecer el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copiar requirements primero para mejor caching
-COPY requirements-modern.txt requirements.txt
+# Instalar dependencias del sistema si fueran necesarias
+# RUN apt-get update && apt-get install -y --no-install-recommends gcc
 
-# Instalar dependencias de Python
+# Etapa 2: Instalar dependencias de Python
+# Copiar solo el archivo de requerimientos primero para aprovechar el cache de Docker
+COPY requirements.txt .
+
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# Copiar código de la aplicación
+# Etapa 3: Copiar el código de la aplicación
 COPY . .
 
-# Crear directorio para ChromaDB
-RUN mkdir -p /app/chroma_db
-
-# Exponer puerto
+# Exponer el puerto en el que correrá la aplicación
 EXPOSE 8000
 
-# Comando de inicio
+# El comando para iniciar la aplicación. Render usará el "Start Command" de la UI.
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
