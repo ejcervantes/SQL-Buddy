@@ -10,4 +10,3 @@ langchain-openai==0.1.7
 
 # --- Base de datos vectorial ---
 chromadb==0.5.0
-langchain-community==0.2.1
