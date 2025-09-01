@@ -1,13 +1,15 @@
 
 
 from fastapi import FastAPI, HTTPException
+import json
+import os
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Dict, Any, Optional
 import uvicorn
 
 from app.config import settings
-from app.services.rag_memory import RAGServiceMemory
+from app.services.rag_chroma import RAGServiceChroma
 from app.services.sql_generator import SQLGeneratorService
 
 # Inicializar FastAPI
@@ -41,18 +43,43 @@ class SQLResponse(BaseModel):
     optimization: str
 
 # Inicializar servicios
-rag_service = RAGServiceMemory()
+rag_service = RAGServiceChroma()
 sql_generator = SQLGeneratorService(rag_service)
 
 @app.on_event("startup")
-async def startup_event():
-    """Evento que se ejecuta al iniciar la aplicación"""
-    print("🚀 Iniciando SQL Query Buddy (RAG)...")
-    
-    # Validar configuración
-    if not settings.validate():
-        print("⚠️  La aplicación puede no funcionar correctamente debido a configuraciones faltantes")
-    
+async def load_seed_metadata():
+    """
+    Al iniciar la aplicación, carga los metadatos de las tablas desde un
+    archivo JSON para poblar la base de datos vectorial.
+    """
+    print("🚀 Aplicación iniciada. Cargando metadatos iniciales...")
+    try:
+        # Construir la ruta al archivo de metadatos de forma segura
+        current_dir = os.path.dirname(__file__)
+        seed_file_path = os.path.join(current_dir, "metadata_seed.json")
+
+        if not os.path.exists(seed_file_path):
+            print("⚠️  Advertencia: No se encontró 'metadata_seed.json'. No se cargarán metadatos iniciales.")
+            return
+
+        with open(seed_file_path, "r", encoding="utf-8") as f:
+            seed_data = json.load(f)
+            
+        tables_loaded = 0
+        for table_meta in seed_data:
+            success = rag_service.add_table_metadata(
+                table_name=table_meta["table_name"],
+                schema_info=table_meta["schema_info"],
+                description=table_meta["description"]
+            )
+            if success:
+                tables_loaded += 1
+        
+        if tables_loaded > 0:
+            print(f"✅ Se cargaron exitosamente los metadatos de {tables_loaded} tablas.")
+
+    except Exception as e:
+        print(f"❌ Error crítico al cargar metadatos iniciales: {e}")
     print(f"✅ Aplicación iniciada en {settings.HOST}:{settings.PORT}")
     print(f"🔑 Modelo LLM: {settings.OPENAI_MODEL}")
     print(f"🗄️  Base vectorial: {settings.CHROMA_PERSIST_DIRECTORY}")

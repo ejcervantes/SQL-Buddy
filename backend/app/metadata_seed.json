@@ -1,0 +1,17 @@
+[
+  {
+    "table_name": "clientes",
+    "schema_info": "id INT PRIMARY KEY, nombre VARCHAR(100) NOT NULL, email VARCHAR(100) UNIQUE, fecha_registro DATE, pais VARCHAR(50)",
+    "description": "Esta tabla almacena información sobre los clientes de la empresa. Contiene datos personales como nombre y email, la fecha en que se registraron y su país de origen. El campo 'id' es el identificador único para cada cliente."
+  },
+  {
+    "table_name": "productos",
+    "schema_info": "id INT PRIMARY KEY, nombre VARCHAR(255), categoria VARCHAR(100), precio DECIMAL(10, 2), stock INT",
+    "description": "Almacena el catálogo de productos de la tienda. Contiene el nombre, la categoría a la que pertenece, su precio de venta y la cantidad de unidades disponibles en el inventario (stock)."
+  },
+  {
+    "table_name": "pedidos",
+    "schema_info": "id INT PRIMARY KEY, cliente_id INT, fecha_pedido TIMESTAMP, total DECIMAL(10, 2), estado VARCHAR(50)",
+    "description": "Registra los pedidos realizados por los clientes. Se vincula con la tabla 'clientes' a través de 'cliente_id'. Almacena la fecha del pedido, el monto total y su estado actual (ej: 'procesando', 'enviado', 'entregado')."
+  }
+]

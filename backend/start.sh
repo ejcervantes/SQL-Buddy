@@ -12,8 +12,12 @@ if [ -z "$PORT" ]; then
     export PORT=8000
 fi
 
+# Establecer el directorio de persistencia de ChromaDB si no está configurado
+CHROMA_PERSIST_DIRECTORY=${CHROMA_PERSIST_DIRECTORY:-./chroma_db}
+
 # Crear directorio para ChromaDB si no existe
-mkdir -p ./chroma_db
+echo "🔧 Asegurando que el directorio de ChromaDB exista en: $CHROMA_PERSIST_DIRECTORY"
+mkdir -p "$CHROMA_PERSIST_DIRECTORY"
 
 # Crear entorno virtual si no existe
 if [ ! -d "venv" ]; then
