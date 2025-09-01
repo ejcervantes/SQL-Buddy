@@ -112,3 +112,22 @@ class RAGServiceChroma:
         except Exception as e:
             print(f"Error en query_openai (health check): {e}")
             return f"Error: {e}"
+        
+    def get_context_for_sql_generation(self, query: str, top_k: int = 3) -> str:
+        """
+        Busca tablas relevantes y formatea sus metadatos como contexto para el LLM.
+        """
+        print(f"🔎 Buscando contexto para la pregunta: '{query}'")
+        relevant_tables = self.search_relevant_tables(query, top_k=top_k)
+        
+        if not relevant_tables:
+            print("⚠️ No se encontraron tablas relevantes para la pregunta.")
+            return "No se encontraron metadatos de tablas relevantes."
+
+        # Formatear el contexto para que sea claro para el LLM
+        context = "Aquí están los esquemas de las tablas relevantes para la pregunta:\n\n"
+        for table in relevant_tables:
+            # table['content'] contiene el texto formateado: "Tabla: ... Esquema: ... Descripción: ..."
+            context += f"---\n{table['content']}\n---\n"
+        
+        return context
