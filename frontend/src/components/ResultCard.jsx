@@ -18,7 +18,7 @@ const ResultCard = ({ result, question, onNewQuery }) => {
    */
   const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(result.sql);
+      await navigator.clipboard.writeText(result.sql_query);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -128,7 +128,7 @@ const ResultCard = ({ result, question, onNewQuery }) => {
               <pre className="sql-pre">
                 <code 
                   className="sql-code-content"
-                  dangerouslySetInnerHTML={{ __html: formatSQL(result.sql) }}
+                  dangerouslySetInnerHTML={{ __html: formatSQL(result.sql_query) }}
                 />
               </pre>
             </div>
