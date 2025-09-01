@@ -71,4 +71,4 @@ requirements-old-stable.txt
 requirements-compatible.txt
 requirements-ultra-compatible.txt
 requirements-final.txt
-requirements-modern.txt
+requirements.txt
