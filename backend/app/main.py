@@ -192,23 +192,12 @@ async def get_tables():
         Lista de tablas con sus metadatos
     """
     try:
-        # Buscar todas las tablas (búsqueda genérica)
-        results = rag_service.search_relevant_tables("", top_k=50)
-        
-        # Filtrar solo tablas únicas
-        unique_tables = {}
-        for result in results:
-            table_name = result["metadata"].get("table_name", "Unknown")
-            if table_name not in unique_tables:
-                unique_tables[table_name] = {
-                    "table_name": table_name,
-                    "description": result["content"],
-                    "metadata": result["metadata"]
-                }
+        # Usar un método dedicado para obtener las tablas
+        table_names = rag_service.get_available_tables()
         
         return {
-            "tables": list(unique_tables.values()),
-            "total_count": len(unique_tables)
+            "tables": [{"name": name} for name in table_names],
+            "count": len(table_names)
         }
         
     except Exception as e:
