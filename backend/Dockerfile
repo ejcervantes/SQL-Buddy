@@ -14,10 +14,10 @@ WORKDIR /app
 
 # Etapa 2: Instalar dependencias de Python
 # Copiar solo el archivo de requerimientos primero para aprovechar el cache de Docker
-COPY ../requirements.txt .
+COPY requirements.txt .
 
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r ../requirements.txt
+    pip install --no-cache-dir -r requirements.txt
 
 # Etapa 3: Configurar el entorno de la aplicación
 # Crear un usuario sin privilegios para ejecutar la aplicación
