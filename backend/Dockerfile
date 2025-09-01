@@ -17,10 +17,20 @@ WORKDIR /app
 COPY requirements.txt .
 
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r ../requirements.txt
+    pip install --no-cache-dir -r requirements.txt
 
-# Etapa 3: Copiar el código de la aplicación
+# Etapa 3: Configurar el entorno de la aplicación
+# Crear un usuario sin privilegios para ejecutar la aplicación
+RUN useradd --create-home --shell /bin/bash appuser
+
+# Copiar el código de la aplicación
 COPY . .
+
+# Cambiar la propiedad de los archivos al nuevo usuario
+RUN chown -R appuser:appuser /app
+
+# Cambiar al usuario sin privilegios
+USER appuser
 
 # Exponer el puerto en el que correrá la aplicación
 EXPOSE 8000
