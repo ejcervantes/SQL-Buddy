@@ -1,6 +1,6 @@
 import os
 import json
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -12,12 +12,11 @@ from app.services.sql_generator import SQLGeneratorService
 
 class AskRequest(BaseModel):
     question: str
-    top_k: int = 5
 
 class AskResponse(BaseModel):
     sql_query: str
-    explanation: str | None = None
-    optimization: str | None = None
+    explanation: str
+    optimization: str
 
 class MetadataRequest(BaseModel):
     table_name: str
@@ -36,7 +35,6 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Configurar CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.ALLOWED_ORIGINS,
@@ -54,13 +52,8 @@ sql_generator = SQLGeneratorService(rag_service)
 
 @app.on_event("startup")
 async def load_seed_metadata():
-    """
-    Al iniciar la aplicación, carga los metadatos de las tablas desde un
-    archivo JSON para poblar la base de datos vectorial.
-    """
     print("🚀 Aplicación iniciada. Cargando metadatos iniciales...")
     try:
-        # Construir la ruta al archivo de metadatos de forma segura
         current_dir = os.path.dirname(__file__)
         seed_file_path = os.path.join(current_dir, "metadata_seed.json")
 
@@ -72,9 +65,11 @@ async def load_seed_metadata():
             seed_data = json.load(f)
             
         tables_loaded = 0
+        existing_tables = rag_service.get_available_tables()
+        print(f"ℹ️  Tablas existentes en la base vectorial: {existing_tables}")
+
         for table_meta in seed_data:
-            # Evitar añadir duplicados si el servicio ya tiene datos
-            if table_meta["table_name"] not in rag_service.get_available_tables():
+            if table_meta["table_name"] not in existing_tables:
                 success = rag_service.add_table_metadata(
                     table_name=table_meta["table_name"],
                     schema_info=table_meta["schema_info"],
@@ -84,9 +79,9 @@ async def load_seed_metadata():
                     tables_loaded += 1
         
         if tables_loaded > 0:
-            print(f"✅ Se sembraron exitosamente los metadatos de {tables_loaded} tablas.")
+            print(f"✅ Se sembraron exitosamente los metadatos de {tables_loaded} nuevas tablas.")
         else:
-            print("ℹ️  No se sembraron nuevas tablas (posiblemente ya existían).")
+            print("ℹ️  No se sembraron nuevas tablas (todas las tablas del seed ya existían).")
 
     except Exception as e:
         print(f"❌ Error crítico al cargar metadatos iniciales: {e}")
@@ -99,7 +94,6 @@ def read_root():
 
 @app.get("/health", response_model=HealthCheckResponse)
 async def health_check():
-    """Verifica el estado de los servicios conectados."""
     return {
         "status": "ok",
         "services": {
@@ -110,7 +104,6 @@ async def health_check():
 
 @app.post("/metadata")
 def add_metadata(metadata: MetadataRequest):
-    """Añade metadatos de una nueva tabla a la base vectorial."""
     success = rag_service.add_table_metadata(
         table_name=metadata.table_name,
         schema_info=metadata.schema_info,
@@ -122,7 +115,6 @@ def add_metadata(metadata: MetadataRequest):
 
 @app.get("/tables")
 def get_tables():
-    """Lista las tablas disponibles en la base vectorial."""
     try:
         table_names = rag_service.get_available_tables()
         return {
@@ -134,9 +126,6 @@ def get_tables():
 
 @app.post("/ask", response_model=AskResponse, tags=["SQL Generation"])
 async def ask_question(request: AskRequest) -> AskResponse:
-    """
-    Recibe una pregunta en lenguaje natural y devuelve una consulta SQL generada.
-    """
     try:
         print(f"🚀 Recibida pregunta para generar SQL: '{request.question}'")
         result = sql_generator.generate_sql_query(request.question)
