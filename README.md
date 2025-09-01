@@ -26,9 +26,11 @@ Una aplicación web inteligente que genera consultas SQL usando RAG (Retrieval-A
 - Output directory: `dist`
 
 ### Backend en Render
-- Web service Python
-- Build command: `pip install -r requirements.txt`
-- Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+- Tipo de Servicio: **Docker**
+- **Root Directory**: `backend`
+- **Dockerfile**: `Dockerfile` (o dejar en blanco)
+- **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+  (Este comando se define en la UI de Render y sobreescribe el `CMD` del Dockerfile)
 
 ## 🔧 Configuración Local
 

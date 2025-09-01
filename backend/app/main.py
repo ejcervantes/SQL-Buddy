@@ -1,21 +1,38 @@
-
-
-from fastapi import FastAPI, HTTPException
-import json
 import os
+import json
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import Dict, Any, Optional
-import uvicorn
 
 from app.config import settings
 from app.services.rag_chroma import RAGServiceChroma
 from app.services.sql_generator import SQLGeneratorService
 
-# Inicializar FastAPI
+# --- Modelos de Datos (Pydantic) ---
+
+class AskRequest(BaseModel):
+    question: str
+    top_k: int = 5
+
+class AskResponse(BaseModel):
+    sql_query: str
+    explanation: str | None = None
+    optimization: str | None = None
+
+class MetadataRequest(BaseModel):
+    table_name: str
+    schema_info: str
+    description: str
+
+class HealthCheckResponse(BaseModel):
+    status: str
+    services: dict
+
+# --- Inicialización de la Aplicación ---
+
 app = FastAPI(
-    title="SQL Query Buddy (RAG)",
-    description="API para generar consultas SQL usando RAG y LLM",
+    title="SQL Query Buddy API",
+    description="API para generar consultas SQL usando RAG y LLMs.",
     version="1.0.0"
 )
 
@@ -28,23 +45,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Modelos Pydantic para las requests
-class QuestionRequest(BaseModel):
-    question: str
+# --- Inicialización de Servicios ---
 
-class MetadataRequest(BaseModel):
-    table_name: str
-    schema_info: str
-    description: str
-
-class SQLResponse(BaseModel):
-    sql: str
-    explanation: str
-    optimization: str
-
-# Inicializar servicios
 rag_service = RAGServiceChroma()
 sql_generator = SQLGeneratorService(rag_service)
+
+# --- Eventos de Ciclo de Vida ---
 
 @app.on_event("startup")
 async def load_seed_metadata():
@@ -67,178 +73,79 @@ async def load_seed_metadata():
             
         tables_loaded = 0
         for table_meta in seed_data:
-            success = rag_service.add_table_metadata(
-                table_name=table_meta["table_name"],
-                schema_info=table_meta["schema_info"],
-                description=table_meta["description"]
-            )
-            if success:
-                tables_loaded += 1
+            # Evitar añadir duplicados si el servicio ya tiene datos
+            if table_meta["table_name"] not in rag_service.get_available_tables():
+                success = rag_service.add_table_metadata(
+                    table_name=table_meta["table_name"],
+                    schema_info=table_meta["schema_info"],
+                    description=table_meta["description"]
+                )
+                if success:
+                    tables_loaded += 1
         
         if tables_loaded > 0:
-            print(f"✅ Se cargaron exitosamente los metadatos de {tables_loaded} tablas.")
+            print(f"✅ Se sembraron exitosamente los metadatos de {tables_loaded} tablas.")
+        else:
+            print("ℹ️  No se sembraron nuevas tablas (posiblemente ya existían).")
 
     except Exception as e:
         print(f"❌ Error crítico al cargar metadatos iniciales: {e}")
-    print(f"✅ Aplicación iniciada en {settings.HOST}:{settings.PORT}")
-    print(f"🔑 Modelo LLM: {settings.OPENAI_MODEL}")
-    print(f"🗄️  Base vectorial: {settings.CHROMA_PERSIST_DIRECTORY}")
+
+# --- Endpoints de la API ---
 
 @app.get("/")
-async def root():
-    """Endpoint raíz con información de la API"""
+def read_root():
+    return {"message": "Bienvenido a SQL Query Buddy API"}
+
+@app.get("/health", response_model=HealthCheckResponse)
+async def health_check():
+    """Verifica el estado de los servicios conectados."""
     return {
-        "message": "SQL Query Buddy (RAG) API",
-        "version": "1.0.0",
-        "status": "running",
-        "endpoints": {
-            "ask": "POST /ask - Generar consulta SQL",
-            "metadata": "POST /metadata - Añadir metadatos de tabla",
-            "health": "GET /health - Estado de la aplicación"
+        "status": "ok",
+        "services": {
+            "openai_embeddings": rag_service.query_openai("health check"),
+            "vector_db": "connected" if rag_service.vector_store else "disconnected"
         }
     }
 
-@app.get("/health")
-async def health_check():
-    """Endpoint de verificación de salud de la aplicación"""
-    try:
-        # Verificar que los servicios estén funcionando
-        test_response = rag_service.query_openai("Responde solo 'OK' si estás funcionando.")
-        
-        return {
-            "status": "healthy",
-            "services": {
-                "rag_service": "operational",
-                "sql_generator": "operational",
-                "llm": "operational" if "OK" in test_response else "error"
-            },
-            "config": {
-                "model": settings.OPENAI_MODEL,
-                "chroma_directory": settings.CHROMA_PERSIST_DIRECTORY
-            }
-        }
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Error en health check: {str(e)}"
-        )
-
-@app.post("/ask", response_model=SQLResponse)
-async def ask_question(request: QuestionRequest):
-    """
-    Genera una consulta SQL basada en una pregunta en lenguaje natural
-    
-    Args:
-        request: Pregunta del usuario
-        
-    Returns:
-        Consulta SQL generada con explicación y optimización
-    """
-    try:
-        if not request.question.strip():
-            raise HTTPException(
-                status_code=400,
-                detail="La pregunta no puede estar vacía"
-            )
-        
-        print(f"🤔 Pregunta recibida: {request.question}")
-        
-        # Generar SQL usando el servicio
-        result = sql_generator.generate_sql_query(request.question)
-        
-        print(f"✅ SQL generado exitosamente")
-        
-        return SQLResponse(
-            sql=result["sql"],
-            explanation=result["explanation"],
-            optimization=result["optimization"]
-        )
-        
-    except Exception as e:
-        print(f"❌ Error generando SQL: {e}")
-        raise HTTPException(
-            status_code=500,
-            detail=f"Error interno del servidor: {str(e)}"
-        )
-
 @app.post("/metadata")
-async def add_table_metadata(request: MetadataRequest):
-    """
-    Añade o actualiza metadatos de una tabla en la base vectorial
-    
-    Args:
-        request: Metadatos de la tabla
-        
-    Returns:
-        Confirmación de la operación
-    """
-    try:
-        if not all([request.table_name.strip(), request.schema_info.strip()]):
-            raise HTTPException(
-                status_code=400,
-                detail="El nombre de la tabla y la información del esquema son obligatorios"
-            )
-        
-        print(f"📝 Añadiendo metadatos para tabla: {request.table_name}")
-        
-        # Añadir metadatos usando el servicio RAG
-        success = rag_service.add_table_metadata(
-            table_name=request.table_name,
-            schema_info=request.schema_info,
-            description=request.description
-        )
-        
-        if success:
-            print(f"✅ Metadatos añadidos exitosamente para: {request.table_name}")
-            return {
-                "message": f"Metadatos de la tabla '{request.table_name}' añadidos exitosamente",
-                "table_name": request.table_name,
-                "status": "success"
-            }
-        else:
-            raise HTTPException(
-                status_code=500,
-                detail=f"No se pudieron añadir los metadatos para la tabla '{request.table_name}'"
-            )
-            
-    except HTTPException:
-        raise
-    except Exception as e:
-        print(f"❌ Error añadiendo metadatos: {e}")
-        raise HTTPException(
-            status_code=500,
-            detail=f"Error interno del servidor: {str(e)}"
-        )
+def add_metadata(metadata: MetadataRequest):
+    """Añade metadatos de una nueva tabla a la base vectorial."""
+    success = rag_service.add_table_metadata(
+        table_name=metadata.table_name,
+        schema_info=metadata.schema_info,
+        description=metadata.description
+    )
+    if not success:
+        raise HTTPException(status_code=500, detail=f"No se pudieron añadir los metadatos para la tabla '{metadata.table_name}'")
+    return {"message": f"Metadatos para la tabla '{metadata.table_name}' añadidos con éxito."}
 
 @app.get("/tables")
-async def get_tables():
-    """
-    Obtiene información sobre todas las tablas disponibles en la base vectorial
-    
-    Returns:
-        Lista de tablas con sus metadatos
-    """
+def get_tables():
+    """Lista las tablas disponibles en la base vectorial."""
     try:
-        # Usar un método dedicado para obtener las tablas
         table_names = rag_service.get_available_tables()
-        
         return {
             "tables": [{"name": name} for name in table_names],
             "count": len(table_names)
         }
-        
     except Exception as e:
-        print(f"❌ Error obteniendo tablas: {e}")
-        raise HTTPException(
-            status_code=500,
-            detail=f"Error interno del servidor: {str(e)}"
-        )
+        raise HTTPException(status_code=500, detail=f"Error obteniendo tablas: {e}")
 
-if __name__ == "__main__":
-    # Ejecutar con uvicorn
-    uvicorn.run(
-        "app.main:app",
-        host=settings.HOST,
-        port=settings.PORT,
-        reload=True  # Solo para desarrollo
-    )
+@app.post("/ask", response_model=AskResponse, tags=["SQL Generation"])
+async def ask_question(request: AskRequest) -> AskResponse:
+    """
+    Recibe una pregunta en lenguaje natural y devuelve una consulta SQL generada.
+    """
+    try:
+        print(f"🚀 Recibida pregunta para generar SQL: '{request.question}'")
+        result = sql_generator.generate_sql_query(request.question)
+        
+        return AskResponse(
+            sql_query=result["sql"],
+            explanation=result["explanation"],
+            optimization=result["optimization"]
+        )
+    except Exception as e:
+        print(f"❌ Error generando SQL: {e}")
+        raise HTTPException(status_code=500, detail=f"Error interno al generar la consulta SQL: {e}")
