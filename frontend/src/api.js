@@ -9,7 +9,7 @@ const API_CONFIG = {
   BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
   
   // Timeout para las requests
-  TIMEOUT: 30000,
+  TIMEOUT: 135000,
   
   // Headers por defecto
   DEFAULT_HEADERS: {
