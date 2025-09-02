@@ -9,8 +9,8 @@ El objetivo principal es permitir a los usuarios, tanto técnicos como no técni
 Puedes interactuar con la aplicación desplegada directamente a través de los siguientes enlaces:
 
 | Servicio          | Enlace de Despliegue
-| **Frontend (UI)** | [![Frontend en Cloudflare](https://sql-buddy.pages.dev)]              |
-| **Backend (API)** | [![Backend en Render](https://sql-buddy-backend-g3cu.onrender.com)]   |
+| **Frontend (UI)** | https://sql-buddy.pages.dev                   |
+| **Backend (API)** | https://sql-buddy-backend-g3cu.onrender.com   |
 
 
 ## 📝 Descripción
