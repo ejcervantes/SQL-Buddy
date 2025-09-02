@@ -1,7 +1,7 @@
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.runnable import RunnablePassthrough
-from langchain_core.output_parsers import PydanticOutputParser
+from langchain_core.output_parsers import PydanticOutputParser, OutputFixingParser
 from pydantic import BaseModel, Field
 
 from app.config import settings
@@ -20,7 +20,8 @@ class SQLGeneratorService:
     def __init__(self, rag_service: RAGServiceChroma):
         self.rag_service = rag_service
         self.llm = ChatOpenAI(model=settings.OPENAI_MODEL, temperature=0, openai_api_key=settings.OPENAI_API_KEY)
-        self.parser = PydanticOutputParser(pydantic_object=SQLResponse)
+        base_parser = PydanticOutputParser(pydantic_object=SQLResponse)
+        self.parser = OutputFixingParser.from_llm(parser=base_parser, llm=self.llm)
         self.prompt_template = self._create_prompt_template()
 
     def _create_prompt_template(self):
@@ -35,7 +36,8 @@ class SQLGeneratorService:
         2.  Usa los nombres de tablas y columnas exactamente como se definen en los esquemas.
         3.  Proporciona una sugerencia de optimización útil, como la creación de un índice en una columna usada en un `WHERE` o `JOIN`. Si no hay una optimización obvia, responde con "No se sugiere ninguna optimización específica.".
         4.  Si la pregunta no se puede responder con los esquemas, la `sql_query` debe ser "ERROR: La pregunta no se puede responder con el contexto proporcionado." y la explicación debe indicar por qué.
-
+        5.  TU SALIDA DEBE SER ÚNICAMENTE UN OBJETO JSON VÁLIDO. No incluyas texto antes o después del JSON. No uses formato markdown como ```json.
+        
         Contexto (Esquemas de Tablas):
         {context}
 
