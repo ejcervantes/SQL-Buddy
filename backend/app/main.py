@@ -102,17 +102,6 @@ async def health_check():
         }
     }
 
-@app.post("/metadata")
-def add_metadata(metadata: MetadataRequest):
-    success = rag_service.add_table_metadata(
-        table_name=metadata.table_name,
-        schema_info=metadata.schema_info,
-        description=metadata.description
-    )
-    if not success:
-        raise HTTPException(status_code=500, detail=f"No se pudieron añadir los metadatos para la tabla '{metadata.table_name}'")
-    return {"message": f"Metadatos para la tabla '{metadata.table_name}' añadidos con éxito."}
-
 @app.get("/tables")
 def get_tables():
     try:

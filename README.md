@@ -1,69 +1,47 @@
-# SQL Query Buddy 🚀
+# SQL Query Buddy
 
-Una aplicación web inteligente que genera consultas SQL usando RAG (Retrieval-Augmented Generation) y LLMs de OpenAI.
+SQL Query Buddy is a full-stack application designed to translate natural language questions into SQL queries. Using the power of Large Language Models (LLM) and the Retrieval-Augmented Generation (RAG) technique, this application not only generates the SQL query but also provides a clear explanation of its functionality and a relevant optimization suggestion.
 
-## ✨ Características
+The main objective is to allow users, both technical and non-technical, to interact with databases in a more intuitive way, without the need to write SQL manually.
 
-- **Generación de SQL Inteligente**: Convierte preguntas en lenguaje natural a consultas SQL
-- **Sistema RAG**: Utiliza metadatos de tablas para generar SQL más preciso
-- **Optimización Automática**: Sugiere mejoras para las consultas generadas
-- **Interfaz Web Moderna**: Frontend React con diseño responsive
-- **API REST**: Backend FastAPI con documentación automática
+## 🔗 Deployment Links
+
+You can interact with the deployed application directly through the following links:
+
+| Servicio          | Enlace de Despliegue
+| **Frontend (UI)** | [![Cloudflare Frontend](https://sql-buddy.pages.dev)]              |
+| **Backend (API)** | [![Render Backend](https://sql-buddy-backend-g3cu.onrender.com)]   |
+
+
+## 📝 Description
+
+- **Intelligent SQL Generation**: Converts natural language questions into SQL queries.
+- **RAG System**: Uses a JSON file to load table schemas into a vector database, providing precise context to the LLM.
+- **Question Analysis**: Offers an explanation of the generated query and suggests possible optimizations.
+- **Modern Web Interface**: Frontend built with React and Vite, with a clean and responsive design.
+- **REST API**: Backend developed with FastAPI that exposes clear and documented endpoints.
 
 ## 🏗️ Arquitectura
 
 - **Frontend**: React + Vite
 - **Backend**: FastAPI + Python
 - **LLM**: OpenAI GPT-4
-- **Base Vectorial**: ChromaDB
+- **Vector Database**: ChromaDB
 - **Deployment**: Cloudflare Pages (Frontend) + Render (Backend)
 
 ## 🚀 Deployment
 
-### Frontend en Cloudflare Pages
-- Automático desde GitHub
-- Build command: `npm run build`
-- Output directory: `dist`
+The deployment architecture is designed to optimize performance and facilitate management by separating the static frontend from the dynamic backend.
 
-### Backend en Render
-- Tipo de Servicio: **Docker**
-- **Root Directory**: `backend`
-- **Dockerfile**: `Dockerfile` (o dejar en blanco)
-- **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-  (Este comando se define en la UI de Render y sobreescribe el `CMD` del Dockerfile)
+### Frontend on Cloudflare Pages
+The React frontend is deployed on Cloudflare Pages. This service is optimized for serving static sites at high speed through its global content delivery network (CDN). It integrates directly with the GitHub repository, automatically deploying each new change on the main branch.
 
-## 🔧 Configuración Local
-
-### Backend
-```bash
-cd backend
-pip install -r requirements.txt
-# Crear archivo .env con OPENAI_API_KEY
-uvicorn app.main:app --reload
-```
-
-### Frontend
-```bash
-cd frontend
-npm install
-npm run dev
-```
+### Backend on Render
+The FastAPI backend is packaged in a Docker container and deployed on Render. This platform is ideal for containerized web services, automatically managing scaling, SSL certificates, and environment variables. The service is configured to run from the backend/ directory of the repository.
 
 ## 📚 API Endpoints
 
-- `GET /` - Información de la API
-- `GET /health` - Estado de salud
-- `POST /ask` - Generar consulta SQL
-- `POST /metadata` - Añadir metadatos de tabla
-- `GET /tables` - Listar tablas disponibles
-
-## 🌟 Uso
-
-1. Añade metadatos de tus tablas usando el endpoint `/metadata`
-2. Haz preguntas en lenguaje natural
-3. Obtén consultas SQL generadas automáticamente
-4. Revisa las explicaciones y optimizaciones sugeridas
-
-## 📝 Licencia
-
-MIT License
+- `GET /` - Root endpoint that returns a welcome message. Useful for verifying that the API is running.
+- `GET /health` - Provides a system health check, verifying the status of critical services like the connection to the vector database.
+- `POST /ask` - This is the main endpoint. It receives a question in natural language and returns the generated SQL query.
+- `GET /tables` - Returns a list of all tables whose metadata is currently loaded into the vector database.
