@@ -1,7 +1,7 @@
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.runnable import RunnablePassthrough
-from langchain_core.output_parsers import PydanticOutputParser, OutputFixingParser
+from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 
 from app.config import settings
@@ -20,8 +20,7 @@ class SQLGeneratorService:
     def __init__(self, rag_service: RAGServiceChroma):
         self.rag_service = rag_service
         self.llm = ChatOpenAI(model=settings.OPENAI_MODEL, temperature=0, openai_api_key=settings.OPENAI_API_KEY)
-        base_parser = PydanticOutputParser(pydantic_object=SQLResponse)
-        self.parser = OutputFixingParser.from_llm(parser=base_parser, llm=self.llm)
+        self.parser = PydanticOutputParser(pydantic_object=SQLResponse)
         self.prompt_template = self._create_prompt_template()
 
     def _create_prompt_template(self):
