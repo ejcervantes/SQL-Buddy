@@ -8,11 +8,9 @@ The main objective is to allow users, both technical and non-technical, to inter
 
 You can interact with the deployed application directly through the following links:
 
-<ul>
-<li>| Servicio          | Enlace de Despliegue                          |</li>
-<li>| **Frontend (UI)** | https://sql-buddy.pages.dev                   |</li>
-<li>| **Backend (API)** | https://sql-buddy-backend-g3cu.onrender.com   |</li>
-</ul>
+| Servicio          | Enlace de Despliegue                          |
+| **Frontend (UI)** | https://sql-buddy.pages.dev                   |
+| **Backend (API)** | https://sql-buddy-backend-g3cu.onrender.com   |
 
 ## 📝 Description
 
