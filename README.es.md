@@ -7,11 +7,11 @@ El objetivo principal es permitir a los usuarios, tanto técnicos como no técni
 ## 🔗 Enlaces de Despliegue
 
 Puedes interactuar con la aplicación desplegada directamente a través de los siguientes enlaces:
-
-| Servicio          | Enlace de Despliegue
-| **Frontend (UI)** | https://sql-buddy.pages.dev                   |
-| **Backend (API)** | https://sql-buddy-backend-g3cu.onrender.com   |
-
+<ul>
+<li>| Servicio          | Enlace de Despliegue                          |</li>
+<li>| **Frontend (UI)** | https://sql-buddy.pages.dev                   |</li>
+<li>| **Backend (API)** | https://sql-buddy-backend-g3cu.onrender.com   |</li>
+</ul>
 
 ## 📝 Descripción
 

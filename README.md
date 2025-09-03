@@ -8,10 +8,11 @@ The main objective is to allow users, both technical and non-technical, to inter
 
 You can interact with the deployed application directly through the following links:
 
-| Servicio          | Enlace de Despliegue
-| **Frontend (UI)** | https://sql-buddy.pages.dev                   |
-| **Backend (API)** | https://sql-buddy-backend-g3cu.onrender.com   |
-
+<ul>
+<li>| Servicio          | Enlace de Despliegue                          |</li>
+<li>| **Frontend (UI)** | https://sql-buddy.pages.dev                   |</li>
+<li>| **Backend (API)** | https://sql-buddy-backend-g3cu.onrender.com   |</li>
+</ul>
 
 ## 📝 Description
 
@@ -21,7 +22,7 @@ You can interact with the deployed application directly through the following li
 - **Modern Web Interface**: Frontend built with React and Vite, with a clean and responsive design.
 - **REST API**: Backend developed with FastAPI that exposes clear and documented endpoints.
 
-## 🏗️ Arquitectura
+## 🏗️ Arquitecture
 
 - **Frontend**: React + Vite
 - **Backend**: FastAPI + Python
