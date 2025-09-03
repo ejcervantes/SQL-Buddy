@@ -101,7 +101,7 @@ const ResultCard = ({ result, question, onNewQuery }) => {
 
         <button
           className={`tab-button ${activeTab === 'sqltool' ? 'active' : ''}`}
-          onClick={() => handleTabChange('querytry')}
+          onClick={() => handleTabChange('sqltool')}
         >
           <span className="tab-icon">⚡</span>
           Prueba Query
@@ -161,7 +161,7 @@ const ResultCard = ({ result, question, onNewQuery }) => {
           </div>
         )}
 
-        {activeTab === 'querytry' && (
+        {activeTab === 'sqltool' && (
           <div className="querytry-content">
             <h4 className="querytry-title">Prueba de Query</h4>
             <div className="querytool-container">
