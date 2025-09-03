@@ -62,7 +62,6 @@ const ResultCard = ({ result, question, onNewQuery }) => {
     <div className="result-card fade-in">
       <div className="result-header">
         <div className="result-question">
-          <span className="question-icon">❓</span>
           <h3 className="question-text">{question}</h3>
         </div>
         
@@ -104,7 +103,7 @@ const ResultCard = ({ result, question, onNewQuery }) => {
           className={`tab-button ${activeTab === 'sqltool' ? 'active' : ''}`}
           onClick={() => handleTabChange('querytry')}
         >
-          <span className="tab-icon">⚡</span>
+          <span className="tab-icon">📊</span>
           Prueba Query
         </button>
       </div>
@@ -182,26 +181,6 @@ const ResultCard = ({ result, question, onNewQuery }) => {
             <span className="meta-icon">⏱️</span>
             {new Date().toLocaleTimeString()}
           </span>
-        </div>
-        
-        <div className="result-actions">
-          <button 
-            className="action-button secondary"
-            onClick={() => window.open('https://sqlformat.org/', '_blank')}
-            title="Formatear SQL online"
-          >
-            <span className="action-icon">🔧</span>
-            Formatear
-          </button>
-          
-          <button 
-            className="action-button secondary"
-            onClick={() => window.open('https://www.db-fiddle.com/', '_blank')}
-            title="Probar SQL online"
-          >
-            <span className="action-icon">🧪</span>
-            Probar
-          </button>
         </div>
       </div>
     </div>

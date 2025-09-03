@@ -19,7 +19,7 @@
 }
 
 #table-container th {
-  background-color: #6a4c93;
+  background-color: var(--primary-color);
   color: #ffffff;
 }
 
