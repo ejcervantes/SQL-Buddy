@@ -1,0 +1,32 @@
+#table-container {
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  margin-top: 30px;
+}
+
+#table-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#table-container th,
+#table-container td {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+#table-container th {
+  background-color: #6a4c93;
+  color: #ffffff;
+}
+
+#table-container tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+#table-container tbody tr:hover {
+  background-color: #e9ecef;
+}
