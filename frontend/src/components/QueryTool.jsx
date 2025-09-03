@@ -2,12 +2,11 @@ import { useState } from 'react';
 import './QueryForm.css';
 import './QueryTool.css';
 import { createClient } from '@supabase/supabase-js'
-import SUPABASE from '../api.js';
 
 // Configura tu cliente de Supabase con tus credenciales
 const supabaseUrl = 'https://lcyxhqbafzfudidzzdtm.supabase.co';
 //const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjeXhocWJhZnpmdWRpZHp6ZHRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzMTcxOTAsImV4cCI6MjA2Mzg5MzE5MH0.dS6Gel7N9ze8gDgqHsG7Hisgo3H_v8RjF_Sd8VI86C0'; // ¡No la expongas en producción!
-const supabaseKey = SUPABASE;
+const supabaseKey = import.meta.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 function convertJsonToTable(jsonData, containerId) {

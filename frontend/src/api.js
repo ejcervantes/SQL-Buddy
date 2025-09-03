@@ -3,7 +3,6 @@
  * Configurado para funcionar tanto en desarrollo local como en producción
  */
 
-const SUPABASE = import.meta.env.SUPABASE_KEY;
 
 // Configuración de la API
 const API_CONFIG = {
