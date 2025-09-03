@@ -10,8 +10,8 @@
     "description": "Almacena el catálogo de productos de la tienda. Contiene el nombre, la categoría a la que pertenece, su precio de venta y la cantidad de unidades disponibles en el inventario (stock)."
   },
   {
-    "table_name": "pedidos",
-    "schema_info": "id INT PRIMARY KEY, cliente_id INT, fecha_pedido TIMESTAMP, total DECIMAL(10, 2), estado VARCHAR(50)",
-    "description": "Registra los pedidos realizados por los clientes. Se vincula con la tabla 'clientes' a través de 'cliente_id'. Almacena la fecha del pedido, el monto total y su estado actual (ej: 'procesando', 'enviado', 'entregado')."
+    "table_name": "ventas",
+    "schema_info": "id INT PRIMARY KEY, cliente_id INT, producto_id INT, fecha_pedido TIMESTAMP, total DECIMAL(10, 2), cantidad INT",
+    "description": "Registra los pedidos realizados por los clientes. Se vincula con la tabla 'clientes' a través de 'cliente_id' y con la tabla 'productos' a través de 'productos_id'. Almacena la fecha del pedido, el monto total y la cantidad de productos comprados."
   }
 ]
