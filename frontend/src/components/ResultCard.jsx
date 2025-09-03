@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './ResultCard.css';
-import QueryTool from './QueryTool.jsx';
+import QueryTool from './QueryTool';
 
 /**
  * Componente para mostrar los resultados de la consulta SQL generada
@@ -102,7 +102,7 @@ const ResultCard = ({ result, question, onNewQuery }) => {
 
         <button
           className={`tab-button ${activeTab === 'sqltool' ? 'active' : ''}`}
-          onClick={() => handleTabChange('sqltool')}
+          onClick={() => handleTabChange('querytry')}
         >
           <span className="tab-icon">⚡</span>
           Prueba Query
@@ -162,7 +162,7 @@ const ResultCard = ({ result, question, onNewQuery }) => {
           </div>
         )}
 
-        {activeTab === 'sqltool' && (
+        {activeTab === 'querytry' && (
           <div className="querytry-content">
             <h4 className="querytry-title">Prueba de Query</h4>
             <div className="querytool-container">
