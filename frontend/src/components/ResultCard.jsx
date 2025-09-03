@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './ResultCard.css';
+import QueryTool from './QueryTool';
 
 /**
  * Componente para mostrar los resultados de la consulta SQL generada
