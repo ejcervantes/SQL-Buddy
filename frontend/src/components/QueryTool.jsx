@@ -2,6 +2,8 @@ import { useState } from 'react';
 import './QueryForm.css';
 import './QueryTool.css';
 import { createClient } from '@supabase/supabase-js'
+import React from 'react';
+
 
 // Configura tu cliente de Supabase con tus credenciales
 const supabaseUrl = 'https://lcyxhqbafzfudidzzdtm.supabase.co';
