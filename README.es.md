@@ -33,7 +33,7 @@ Puedes interactuar con la aplicación desplegada directamente a través de los s
 - **Backend**: FastAPI + Python
 - **LLM**: OpenAI GPT-4
 - **Base Vectorial**: ChromaDB
-- **Base de Datos**: SupaBase
+- **Base de Datos**: SupaBase (PostgreSQL)
 - **Despliegue**: Cloudflare Pages (Frontend) + Render (Backend)
 
 ## 🚀 Despliegue

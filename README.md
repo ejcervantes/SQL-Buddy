@@ -33,7 +33,7 @@ You can interact with the deployed application directly through the following li
 - **Backend**: FastAPI + Python
 - **LLM**: OpenAI GPT-4
 - **Vector Database**: ChromaDB
-- **Database**: SupaBase
+- **Database**: SupaBase (PostgreSQL)
 - **Deployment**: Cloudflare Pages (Frontend) + Render (Backend)
 
 ## 🚀 Deployment
