@@ -11,7 +11,7 @@ The deployed application simulates the database of a convenience store. It curre
 - Products: This table contains information about the store's products, with values ​​such as price, stock, and category.
 - Sales: This table contains information about the store's orders, with information such as the order, product, date, and total purchase.
 
-It was developed in Spanish, but it can work with English questions too. For a better experience, I recommend using the Google Translate feature.
+It was developed in Spanish, but it can work with English questions too. For a better experience, I recommend not using the Google Translate feature, as it tends to interfere with the application when testing the query.
 
 You can interact with the deployed application directly through the following links:
 
