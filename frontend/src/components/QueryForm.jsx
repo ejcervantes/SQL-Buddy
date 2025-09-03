@@ -62,7 +62,14 @@ const QueryForm = ({ onSubmit, isLoading = false }) => {
           <img src={myLogo} alt='Logo' className='query-form-title-img'></img>  SQL Query Buddy (RAG)
         </h2>
         <p className="query-form-subtitle">
-          Escribe tu pregunta en lenguaje natural y obtén consultas SQL optimizadas
+          La aplicación desplegada simula la base de datos de una tienda por conveniencia. Por el momento cuenta con 
+          3 tablas, por lo que la IA unicamente podrá responder preguntas relacionadas a estas tablas, de otra 
+          forma no podrá generar una consulta SQL adecuada por falta de contexto.
+          <ul>
+            <li>Clientes: Esta tabla almacena información sobre los clientes de la empresa. Contiene datos personales como nombre y email, la fecha en que se registraron y su país de origen.</li>
+            <li>Productos: Esta tabla contiene información de los productos de la tienda, con valores como precio, stock y categoria.</li>
+            <li>Ventas: La tabla contiene información de los pedidos de la tienda, con información como el pedido, el producto, la fecha y compra total.</li>
+          </ul>
         </p>
       </div>
 

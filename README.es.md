@@ -6,7 +6,13 @@ El objetivo principal es permitir a los usuarios, tanto técnicos como no técni
 
 ## 🔗 Enlaces de Despliegue
 
+La aplicación desplegada simula la base de datos de una tienda por conveniencia. Cuenta con 3 tablas por el momento:
+- Clientes: Esta tabla almacena información sobre los clientes de la empresa. Contiene datos personales como nombre y email, la fecha en que se registraron y su país de origen.
+- Productos: Esta tabla contiene información de los productos de la tienda, con valores como precio, stock y categoria.
+- Ventas: La tabla contiene información de los pedidos de la tienda, con información como el pedido, el producto, la fecha y compra total.
+
 Puedes interactuar con la aplicación desplegada directamente a través de los siguientes enlaces:
+
 <ul>
 <li>| Servicio          | Enlace de Despliegue                          |</li>
 <li>| **Frontend (UI)** | https://sql-buddy.pages.dev                   |</li>
@@ -27,6 +33,7 @@ Puedes interactuar con la aplicación desplegada directamente a través de los s
 - **Backend**: FastAPI + Python
 - **LLM**: OpenAI GPT-4
 - **Base Vectorial**: ChromaDB
+- **Base de Datos**: SupaBase
 - **Despliegue**: Cloudflare Pages (Frontend) + Render (Backend)
 
 ## 🚀 Despliegue

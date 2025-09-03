@@ -33,9 +33,14 @@
 }
 
 .query-form-subtitle {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--text-secondary);
-  line-height: 1.6;
+  line-height: 1.3;
+  text-align: justify;
+}
+
+.query-form-subtitle ul {
+  padding: 0.8rem 2.5rem;
 }
 
 .query-form {

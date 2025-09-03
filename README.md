@@ -6,6 +6,13 @@ The main objective is to allow users, both technical and non-technical, to inter
 
 ## 🔗 Deployment Links
 
+The deployed application simulates the database of a convenience store. It currently has three tables:
+- Customers: This table stores information about the company's customers. It contains personal data such as name and email address, registration date, and country of origin.
+- Products: This table contains information about the store's products, with values ​​such as price, stock, and category.
+- Sales: This table contains information about the store's orders, with information such as the order, product, date, and total purchase.
+
+It was developed in Spanish, but it can work with English questions too. For a better experience, I recommend using the Google Translate feature.
+
 You can interact with the deployed application directly through the following links:
 
 | Servicio          | Enlace de Despliegue                          |  
@@ -26,6 +33,7 @@ You can interact with the deployed application directly through the following li
 - **Backend**: FastAPI + Python
 - **LLM**: OpenAI GPT-4
 - **Vector Database**: ChromaDB
+- **Database**: SupaBase
 - **Deployment**: Cloudflare Pages (Frontend) + Render (Backend)
 
 ## 🚀 Deployment
