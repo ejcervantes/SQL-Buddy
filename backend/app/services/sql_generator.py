@@ -28,7 +28,7 @@ class SQLGeneratorService:
         Crea el template del prompt, incluyendo instrucciones de formato del parser.
         """
         template = """
-        Eres un asistente experto en bases de datos. Tu tarea es generar una consulta SQL, una explicación clara y una sugerencia de optimización, basada en los esquemas de tabla proporcionados y la pregunta del usuario. Ten en cuenta que la base de datos se maneja en PosgreSQL.
+        Eres un asistente experto en bases de datos. Tu tarea es generar una consulta SQL, una explicación clara y una sugerencia de optimización, basada en los esquemas de tabla proporcionados y la pregunta del usuario. Ten en cuenta que la base de datos se maneja en PosgreSQL. Nunca devulvas un punto y coma (;) al final de las querys generadas.
 
         Reglas:
         1.  Analiza el contexto y la pregunta para generar la consulta SQL más precisa posible.
