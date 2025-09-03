@@ -59,7 +59,7 @@ const QueryForm = ({ onSubmit, isLoading = false }) => {
     <div className="query-form-container">
       <div className="query-form-header">
         <h2 className="query-form-title">
-          <img src={myLogo} alt='Logo'></img>  SQL Query Buddy (RAG)
+          <img src={myLogo} alt='Logo' className='query-form-title-img'></img>  SQL Query Buddy (RAG)
         </h2>
         <p className="query-form-subtitle">
           Escribe tu pregunta en lenguaje natural y obtén consultas SQL optimizadas

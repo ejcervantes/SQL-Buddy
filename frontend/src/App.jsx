@@ -187,16 +187,16 @@ function App() {
       <footer className="app-footer">
         <div className="container">
           <p className="footer-text">
-            🤖 SQL Query Buddy (RAG) - Genera consultas SQL usando inteligencia artificial
+            SQL Query Buddy (RAG) - Genera consultas SQL usando inteligencia artificial
           </p>
           <div className="footer-links">
             <a 
-              href="https://github.com" 
+              href="https://github.com/ejcervantes/SQL-Buddy"
               target="_blank" 
               rel="noopener noreferrer"
               className="footer-link"
             >
-              GitHub
+              GitHub - Source Code
             </a>
             <span className="footer-separator">•</span>
             <a 

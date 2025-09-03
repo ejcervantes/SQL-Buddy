@@ -26,6 +26,12 @@
   background-clip: text;
 }
 
+.query-form-title-img {
+  height: 1em;
+  width: auto;
+  vertical-align: middle;
+}
+
 .query-form-subtitle {
   font-size: 1.1rem;
   color: var(--text-secondary);
