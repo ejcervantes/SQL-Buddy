@@ -4,9 +4,18 @@ import './QueryTool.css';
 import { createClient } from '@supabase/supabase-js'
 
 
-// Configura tu cliente de Supabase con tus credenciales
-const supabaseUrl = 'https://lcyxhqbafzfudidzzdtm.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjeXhocWJhZnpmdWRpZHp6ZHRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzMTcxOTAsImV4cCI6MjA2Mzg5MzE5MH0.dS6Gel7N9ze8gDgqHsG7Hisgo3H_v8RjF_Sd8VI86C0'; // ¡No la expongas en producción!
+// Las credenciales de Supabase se leen desde variables de entorno (prefijo VITE_).
+// Nunca escribas las llaves directamente en el código: usa un archivo .env (ver .env.example).
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error(
+    'Faltan las variables de entorno VITE_SUPABASE_URL y/o VITE_SUPABASE_ANON_KEY. ' +
+    'Crea un archivo .env en frontend/ basándote en .env.example.'
+  );
+}
+
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 function convertJsonToTable(jsonData, containerId) {

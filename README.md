@@ -22,7 +22,7 @@ You can interact with the deployed application directly through the following li
 ## 📝 Description
 
 - **Intelligent SQL Generation**: Converts natural language questions into SQL queries.
-- **RAG System**: Uses a JSON file to load table schemas into a vector database, providing precise context to the LLM.
+- **RAG System**: Introspects the database schema live (via `information_schema`) to load table schemas into a vector database, providing precise context to the LLM. Falls back to a seed JSON file when no database connection is configured.
 - **Question Analysis**: Offers an explanation of the generated query and suggests possible optimizations.
 - **Modern Web Interface**: Frontend built with React and Vite, with a clean and responsive design.
 - **REST API**: Backend developed with FastAPI that exposes clear and documented endpoints.

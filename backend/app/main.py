@@ -7,6 +7,7 @@ from pydantic import BaseModel
 from app.config import settings
 from app.services.rag_chroma import RAGServiceChroma
 from app.services.sql_generator import SQLGeneratorService
+from app.services.schema_introspector import fetch_schema_metadata
 
 # --- Modelos de Datos (Pydantic) ---
 
@@ -50,20 +51,47 @@ sql_generator = SQLGeneratorService(rag_service)
 
 # --- Eventos de Ciclo de Vida ---
 
+def _load_metadata_from_db() -> list | None:
+    """Intenta leer el esquema en vivo desde Postgres. Devuelve None si no aplica."""
+    if not settings.DATABASE_URL:
+        print("ℹ️  DATABASE_URL no configurada. Se usará metadata_seed.json como respaldo.")
+        return None
+    try:
+        metadata = fetch_schema_metadata()
+        print(f"✅ Esquema leído en vivo desde la base de datos ({len(metadata)} tablas).")
+        return metadata
+    except Exception as e:
+        print(f"⚠️  No se pudo leer el esquema desde la base de datos ({e}). "
+              f"Se usará metadata_seed.json como respaldo.")
+        return None
+
+
+def _load_metadata_from_json() -> list:
+    """Respaldo: lee los metadatos desde metadata_seed.json."""
+    current_dir = os.path.dirname(__file__)
+    seed_file_path = os.path.join(current_dir, "metadata_seed.json")
+
+    if not os.path.exists(seed_file_path):
+        print("⚠️  Advertencia: No se encontró 'metadata_seed.json'. No se cargarán metadatos iniciales.")
+        return []
+
+    with open(seed_file_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
 @app.on_event("startup")
 async def load_seed_metadata():
     print("🚀 Aplicación iniciada. Cargando metadatos iniciales...")
     try:
-        current_dir = os.path.dirname(__file__)
-        seed_file_path = os.path.join(current_dir, "metadata_seed.json")
+        # Fuente de verdad preferida: el esquema real de la base de datos.
+        # Si no hay conexión disponible, se recurre al JSON de respaldo.
+        seed_data = _load_metadata_from_db()
+        if seed_data is None:
+            seed_data = _load_metadata_from_json()
 
-        if not os.path.exists(seed_file_path):
-            print("⚠️  Advertencia: No se encontró 'metadata_seed.json'. No se cargarán metadatos iniciales.")
+        if not seed_data:
             return
 
-        with open(seed_file_path, "r", encoding="utf-8") as f:
-            seed_data = json.load(f)
-            
         tables_loaded = 0
         existing_tables = rag_service.get_available_tables()
         print(f"ℹ️  Tablas existentes en la base vectorial: {existing_tables}")

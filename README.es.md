@@ -22,7 +22,7 @@ Puedes interactuar con la aplicación desplegada directamente a través de los s
 ## 📝 Descripción
 
 - **Generación de SQL Inteligente**: Convierte preguntas en lenguaje natural a consultas SQL
-- **Sistema RAG**: Utiliza un archivo JSON para cargar los esquemas de las tablas en una base de datos vectorial, proporcionando un contexto preciso al LLM.
+- **Sistema RAG**: Introspecta el esquema de la base de datos en vivo (vía `information_schema`) para cargar los esquemas de las tablas en una base de datos vectorial, proporcionando un contexto preciso al LLM. Si no hay conexión a la base de datos configurada, recurre a un archivo JSON de respaldo.
 - **Análisis de Consultas**: Ofrece una explicación de la consulta generada y sugiere posibles optimizaciones.
 - **Interfaz Web Moderna**: Frontend construido con React y Vite, con un diseño limpio y responsive.
 - **API REST**: Backend desarrollado con FastAPI que expone endpoints claros y está documentado.
