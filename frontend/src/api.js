@@ -6,8 +6,9 @@
 
 // Configuración de la API
 const API_CONFIG = {
-  // URL base del backend - cambiar según el entorno
-  BASE_URL: import.meta.env.VITE_API_URL,
+  // URL base del backend. Si no se define VITE_API_URL, se usa el mismo origen
+  // (rutas relativas), ideal cuando el backend sirve también el frontend.
+  BASE_URL: import.meta.env.VITE_API_URL || '',
   
   // Timeout para las requests
   TIMEOUT: 135000,
@@ -71,7 +72,7 @@ class ApiClient {
       clearTimeout(timeoutId);
       
       if (error.name === 'AbortError') {
-        throw new ApiError(408, 'Request timeout - La petición tardó demasiado');
+        throw new ApiError(408, 'Request timeout - The request took too long');
       }
       
       if (error instanceof ApiError) {
@@ -79,7 +80,7 @@ class ApiClient {
       }
       
       // Error de red u otro tipo
-      throw new ApiError(0, `Error de conexión: ${error.message}`);
+      throw new ApiError(0, `Connection error: ${error.message}`);
     }
   }
 

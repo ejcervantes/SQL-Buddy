@@ -2,6 +2,7 @@ import os
 import json
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from app.config import settings
@@ -116,10 +117,6 @@ async def load_seed_metadata():
 
 # --- Endpoints de la API ---
 
-@app.get("/")
-def read_root():
-    return {"message": "Bienvenido a SQL Query Buddy API"}
-
 @app.get("/health", response_model=HealthCheckResponse)
 async def health_check():
     return {
@@ -155,3 +152,14 @@ async def ask_question(request: AskRequest) -> AskResponse:
     except Exception as e:
         print(f"❌ Error generando SQL: {e}")
         raise HTTPException(status_code=500, detail=f"Error interno al generar la consulta SQL: {e}")
+
+# --- Frontend estático ---
+# Sirve el build del frontend (carpeta 'static', generada en el Dockerfile).
+# Se monta al final para que las rutas de la API tengan prioridad. Con html=True,
+# "/" devuelve index.html. Si la carpeta no existe (ejecución solo-backend), se omite.
+static_dir = os.path.join(os.path.dirname(__file__), "..", "static")
+if os.path.isdir(static_dir):
+    app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")
+    print(f"✅ Frontend estático servido desde: {static_dir}")
+else:
+    print("ℹ️  No se encontró el build del frontend ('static'). Ejecutando solo como API.")

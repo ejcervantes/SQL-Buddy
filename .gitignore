@@ -38,6 +38,9 @@ ENV/
 chroma_db/
 chroma_db_*/
 
+# Build del frontend copiado dentro del backend (solo se genera en la imagen Docker)
+backend/static/
+
 # Node.js
 node_modules/
 npm-debug.log*
@@ -75,3 +78,4 @@ logs/
 # Temporary files
 *.tmp
 *.temp
+.claude/

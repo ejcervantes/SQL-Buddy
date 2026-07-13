@@ -61,22 +61,22 @@ const QueryForm = ({ onSubmit, isLoading = false }) => {
         <h2 className="query-form-title">
           <img src={myLogo} alt='Logo' className='query-form-title-img'></img>  SQL Query Buddy (RAG)
         </h2>
-        <p className="query-form-subtitle">
-          La aplicación desplegada simula la base de datos de una tienda por conveniencia. Por el momento cuenta con 
-          3 tablas, por lo que la IA unicamente podrá responder preguntas relacionadas a estas tablas, de otra 
-          forma no podrá generar una consulta SQL adecuada por falta de contexto.
+        <div className="query-form-subtitle">
+          The deployed application simulates the database of a convenience store. It currently has
+          3 tables, so the AI can only answer questions related to these tables; otherwise
+          it will not be able to generate a proper SQL query due to lack of context.
           <ul>
-            <li>Clientes: Esta tabla almacena información sobre los clientes de la empresa. Contiene datos personales como nombre y email, la fecha en que se registraron y su país de origen.</li>
-            <li>Productos: Esta tabla contiene información de los productos de la tienda, con valores como precio, stock y categoria.</li>
-            <li>Ventas: La tabla contiene información de los pedidos de la tienda, con información como el pedido, el producto, la fecha y compra total.</li>
+            <li>Customers: This table stores information about the company's customers. It contains personal data such as name and email, the date they registered, and their country of origin.</li>
+            <li>Products: This table contains information about the store's products, with values such as price, stock, and category.</li>
+            <li>Sales: This table contains information about the store's orders, with data such as the order, the product, the date, and the total purchase.</li>
           </ul>
-        </p>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="query-form">
         <div className="input-group">
           <label htmlFor="question" className="input-label">
-            ¿Qué quieres consultar?
+            What do you want to query?
           </label>
           
           <div className="input-wrapper">
@@ -86,7 +86,7 @@ const QueryForm = ({ onSubmit, isLoading = false }) => {
               value={question}
               onChange={handleInputChange}
               onKeyPress={handleKeyPress}
-              placeholder="Ej: ¿Cuántos usuarios se registraron en el último mes?"
+              placeholder="E.g.: How many users registered last month?"
               className={`question-input ${!isValid ? 'error' : ''}`}
               rows="3"
               maxLength="500"
@@ -100,7 +100,7 @@ const QueryForm = ({ onSubmit, isLoading = false }) => {
               
               {!isValid && (
                 <span className="error-message">
-                  La pregunta no puede estar vacía
+                  The question cannot be empty
                 </span>
               )}
             </div>
@@ -116,12 +116,12 @@ const QueryForm = ({ onSubmit, isLoading = false }) => {
             {isLoading ? (
               <>
                 <span className="spinner"></span>
-                Generando SQL...
+                Generating SQL...
               </>
             ) : (
               <>
                 <span className="button-icon">⚡</span>
-                Generar SQL
+                Generate SQL
               </>
             )}
           </button>
@@ -129,38 +129,38 @@ const QueryForm = ({ onSubmit, isLoading = false }) => {
       </form>
 
       <div className="query-form-examples">
-        <h3 className="examples-title">💡 Ejemplos de preguntas:</h3>
+        <h3 className="examples-title">💡 Example questions:</h3>
         <div className="examples-grid">
           <button
             className="example-button"
-            onClick={() => setQuestion('¿Cuántos usuarios hay en total?')}
+            onClick={() => setQuestion('How many customers are there in total?')}
             disabled={isLoading}
           >
-            ¿Cuántos usuarios hay en total?
+            How many customers are there in total?
           </button>
-          
+
           <button
             className="example-button"
-            onClick={() => setQuestion('Muestra los productos más vendidos del mes')}
+            onClick={() => setQuestion('Show the best-selling products of the month')}
             disabled={isLoading}
           >
-            Muestra los productos más vendidos del mes
+            Show the best-selling products of the month
           </button>
-          
+
           <button
             className="example-button"
-            onClick={() => setQuestion('Encuentra clientes que no han hecho pedidos')}
+            onClick={() => setQuestion('Find customers who have not placed orders')}
             disabled={isLoading}
           >
-            Encuentra clientes que no han hecho pedidos
+            Find customers who have not placed orders
           </button>
-          
+
           <button
             className="example-button"
-            onClick={() => setQuestion('Calcula el total de ventas por categoría')}
+            onClick={() => setQuestion('Calculate total sales by category')}
             disabled={isLoading}
           >
-            Calcula el total de ventas por categoría
+            Calculate total sales by category
           </button>
         </div>
       </div>

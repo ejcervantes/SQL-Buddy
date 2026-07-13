@@ -61,11 +61,11 @@ function App() {
         setResult(response.data);
         console.log('Respuesta recibida:', response.data);
       } else {
-        setError(response.error || 'Error desconocido al generar SQL');
+        setError(response.error || 'Unknown error while generating SQL');
         console.error('Error en la respuesta:', response);
       }
     } catch (err) {
-      setError('Error de conexión con el servidor');
+      setError('Connection error with the server');
       console.error('Error al enviar pregunta:', err);
     } finally {
       setIsLoading(false);
@@ -89,7 +89,7 @@ function App() {
       return (
         <div className="api-status-banner checking">
           <span className="status-icon">⏳</span>
-          Verificando conexión con el servidor...
+          Checking connection to the server...
         </div>
       );
     }
@@ -98,12 +98,12 @@ function App() {
       return (
         <div className="api-status-banner error">
           <span className="status-icon">❌</span>
-          No se pudo conectar con el servidor
-          <button 
+          Could not connect to the server
+          <button
             className="retry-button"
             onClick={checkApiHealth}
           >
-            Reintentar
+            Retry
           </button>
         </div>
       );
@@ -113,7 +113,7 @@ function App() {
       return (
         <div className="api-status-banner healthy">
           <span className="status-icon">✅</span>
-          Conectado al servidor
+          Connected to the server
         </div>
       );
     }
@@ -131,14 +131,14 @@ function App() {
       <div className="error-message fade-in">
         <div className="error-header">
           <span className="error-icon">⚠️</span>
-          <h3>Error al generar SQL</h3>
+          <h3>Error generating SQL</h3>
         </div>
         <p className="error-text">{error}</p>
-        <button 
+        <button
           className="retry-button"
           onClick={() => handleSubmitQuestion(lastQuestion)}
         >
-          Reintentar
+          Retry
         </button>
       </div>
     );
@@ -175,8 +175,8 @@ function App() {
             <div className="loading-state fade-in">
               <div className="loading-content">
                 <div className="loading-spinner"></div>
-                <h3>Generando consulta SQL...</h3>
-                <p>Esto puede tomar unos segundos</p>
+                <h3>Generating SQL query...</h3>
+                <p>This may take a few seconds</p>
               </div>
             </div>
           )}
@@ -187,7 +187,7 @@ function App() {
       <footer className="app-footer">
         <div className="container">
           <p className="footer-text">
-            SQL Query Buddy (RAG) - Genera consultas SQL usando inteligencia artificial
+            SQL Query Buddy (RAG) - Generate SQL queries using artificial intelligence
           </p>
           <div className="footer-links">
             <a 

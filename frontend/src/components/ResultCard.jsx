@@ -70,7 +70,7 @@ const ResultCard = ({ result, question, onNewQuery }) => {
           onClick={onNewQuery}
         >
           <span className="button-icon">🔄</span>
-          Nueva Consulta
+          New Query
         </button>
       </div>
 
@@ -80,7 +80,7 @@ const ResultCard = ({ result, question, onNewQuery }) => {
           onClick={() => handleTabChange('sql')}
         >
           <span className="tab-icon">💻</span>
-          SQL Generado
+          Generated SQL
         </button>
         
         <button
@@ -88,7 +88,7 @@ const ResultCard = ({ result, question, onNewQuery }) => {
           onClick={() => handleTabChange('explanation')}
         >
           <span className="tab-icon">📖</span>
-          Explicación
+          Explanation
         </button>
         
         <button
@@ -96,7 +96,7 @@ const ResultCard = ({ result, question, onNewQuery }) => {
           onClick={() => handleTabChange('optimization')}
         >
           <span className="tab-icon">⚡</span>
-          Optimización
+          Optimization
         </button>
 
         <button
@@ -104,7 +104,7 @@ const ResultCard = ({ result, question, onNewQuery }) => {
           onClick={() => handleTabChange('querytry')}
         >
           <span className="tab-icon">📊</span>
-          Prueba Query
+          Test Query
         </button>
       </div>
 
@@ -112,21 +112,21 @@ const ResultCard = ({ result, question, onNewQuery }) => {
         {activeTab === 'sql' && (
           <div className="sql-content">
             <div className="sql-header">
-              <h4 className="content-title">Consulta SQL Generada</h4>
+              <h4 className="content-title">Generated SQL Query</h4>
               <button
                 className={`copy-button ${copied ? 'copied' : ''}`}
                 onClick={copyToClipboard}
-                title="Copiar SQL"
+                title="Copy SQL"
               >
                 {copied ? (
                   <>
                     <span className="copy-icon">✅</span>
-                    Copiado
+                    Copied
                   </>
                 ) : (
                   <>
                     <span className="copy-icon">📋</span>
-                    Copiar
+                    Copy
                   </>
                 )}
               </button>
@@ -145,7 +145,7 @@ const ResultCard = ({ result, question, onNewQuery }) => {
 
         {activeTab === 'explanation' && (
           <div className="explanation-content">
-            <h4 className="content-title">¿Qué hace esta consulta?</h4>
+            <h4 className="content-title">What does this query do?</h4>
             <div className="content-text">
               <p>{result.explanation}</p>
             </div>
@@ -154,7 +154,7 @@ const ResultCard = ({ result, question, onNewQuery }) => {
 
         {activeTab === 'optimization' && (
           <div className="optimization-content">
-            <h4 className="content-title">Sugerencias de Optimización</h4>
+            <h4 className="content-title">Optimization Suggestions</h4>
             <div className="content-text">
               <p>{result.optimization}</p>
             </div>
@@ -163,7 +163,7 @@ const ResultCard = ({ result, question, onNewQuery }) => {
 
         {activeTab === 'querytry' && (
           <div className="querytry-content">
-            <h4 className="querytry-title">Prueba de Query</h4>
+            <h4 className="querytry-title">Query Test</h4>
             <div className="querytool-container">
               <QueryTool />
             </div>
@@ -175,7 +175,7 @@ const ResultCard = ({ result, question, onNewQuery }) => {
         <div className="result-meta">
           <span className="meta-item">
             <span className="meta-icon">🤖</span>
-            Generado con IA
+            Generated with AI
           </span>
           <span className="meta-item">
             <span className="meta-icon">⏱️</span>

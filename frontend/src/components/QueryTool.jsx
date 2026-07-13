@@ -9,14 +9,18 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseKey) {
+// Solo creamos el cliente si hay credenciales; así la app no truena al
+// importar cuando faltan las variables de entorno.
+const supabase = (supabaseUrl && supabaseKey)
+  ? createClient(supabaseUrl, supabaseKey)
+  : null;
+
+if (!supabase) {
   console.error(
     'Faltan las variables de entorno VITE_SUPABASE_URL y/o VITE_SUPABASE_ANON_KEY. ' +
     'Crea un archivo .env en frontend/ basándote en .env.example.'
   );
 }
-
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 function convertJsonToTable(jsonData, containerId) {
     if (!Array.isArray(jsonData) || jsonData.length === 0) {
@@ -63,15 +67,21 @@ function convertJsonToTable(jsonData, containerId) {
 
 function QueryTool() {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState('Aquí aparecerán los resultados.');
+  const [results, setResults] = useState('Results will appear here.');
   const [loading, setLoading] = useState(false);
 
   const executeQuery = async () => {
     setLoading(true);
-    setResults('Cargando...');
+    setResults('Loading...');
 
     if (!query.trim()) {
-      setResults('Por favor, ingresa una consulta SQL.');
+      setResults('Please enter a SQL query.');
+      setLoading(false);
+      return;
+    }
+
+    if (!supabase) {
+      setResults('Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
       setLoading(false);
       return;
     }
@@ -88,7 +98,7 @@ function QueryTool() {
       if (Array.isArray(data) && data.length > 0) {
         setResults(convertJsonToTable(data, "table-container"));
       } else {
-        setResults('Consulta exitosa, pero no se encontraron resultados.');
+        setResults('Query successful, but no results were found.');
       }
       
     } catch (error) {
@@ -101,21 +111,21 @@ function QueryTool() {
 
   return (
     <div className="query-form">
-      <label className='input-label' htmlFor="queryInput">Ingresa tu consulta SQL:</label>
+      <label className='input-label' htmlFor="queryInput">Enter your SQL query:</label>
       <div className="input-group">
         <textarea
             id="queryInput"
             className='question-input'
-            placeholder="Ejemplo: SELECT * FROM users;"
+            placeholder="Example: SELECT * FROM users;"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
         />
         <button className="submit-button" onClick={executeQuery} disabled={loading}>
-            {loading ? 'Ejecutando...' : 'Ejecutar Consulta'}
+            {loading ? 'Executing...' : 'Run Query'}
         </button>
       </div>
       <div className="content-text">
-        <h5>Resultado de la API</h5>
+        <h5>API Result</h5>
         <div id="table-container">
             <pre id="results">
               {results};

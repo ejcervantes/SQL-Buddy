@@ -1,32 +1,50 @@
+/* ============================================================
+   QueryTool — Tabla de resultados, tema RETRO blanco y negro
+   ============================================================ */
+
 #table-container {
-  background-color: #f8f9fa;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 24px;
-  margin-top: 30px;
+  background: #ffffff;
+  border: 3px solid #000000;
+  border-radius: 0;
+  box-shadow: 6px 6px 0 #000000;
+  padding: 0;
+  margin-top: 1.5rem;
+  overflow-x: auto;
 }
 
 #table-container table {
   width: 100%;
   border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
 }
 
 #table-container th,
 #table-container td {
   text-align: left;
-  padding: 12px;
-  border-bottom: 1px solid #dee2e6;
+  padding: 10px 12px;
+  border: 2px solid #000000;
 }
 
 #table-container th {
-  background-color: var(--primary-color);
+  background: #000000;
   color: #ffffff;
-}
-
-#table-container tbody tr:nth-child(even) {
-  background-color: #f2f2f2;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
 }
 
 #table-container tbody tr:hover {
-  background-color: #e9ecef;
+  background: #000000;
+  color: #ffffff;
+}
+
+/* Salida de texto tipo terminal */
+#results {
+  display: block;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: #000000;
 }
