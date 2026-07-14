@@ -72,9 +72,21 @@ class SQLGeneratorService:
                 "optimization": response.optimization_suggestion
             }
         except Exception as e:
-            print(f"❌ Error al parsear la respuesta del LLM: {e}")
+            # Clasifica el error para mostrar una causa clara en vez de un genérico.
+            detail = str(e)
+            low = detail.lower()
+            if "account_deactivated" in low or "invalid_api_key" in low or "401" in low or "authentication" in low:
+                summary = "ERROR: OpenAI authentication/account problem (check the API key and that the account is active)."
+            elif "insufficient_quota" in low or "429" in low or "rate limit" in low or "quota" in low:
+                summary = "ERROR: OpenAI quota/rate limit reached (check billing and usage limits)."
+            elif "model" in low and ("does not exist" in low or "not found" in low or "do not have access" in low):
+                summary = "ERROR: The configured model is not available for this account (check OPENAI_MODEL)."
+            else:
+                summary = "ERROR: The language model returned an invalid or unreadable response."
+
+            print(f"❌ Error generando SQL: {detail}")
             return {
-                "sql": "ERROR: El modelo de lenguaje devolvió una respuesta con formato inválido.",
-                "explanation": f"No se pudo parsear la respuesta del LLM. Detalles del error: {e}",
-                "optimization": "No disponible debido a un error de formato."
+                "sql": summary,
+                "explanation": f"The SQL query could not be generated. Error details: {detail}",
+                "optimization": "Not available due to the error above."
             }
