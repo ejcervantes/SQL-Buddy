@@ -6,9 +6,8 @@
 
 // Configuración de la API
 const API_CONFIG = {
-  // URL base del backend. Si no se define VITE_API_URL, se usa el mismo origen
-  // (rutas relativas), ideal cuando el backend sirve también el frontend.
-  BASE_URL: import.meta.env.VITE_API_URL || '',
+  // URL base del backend - se define con VITE_API_URL según el entorno
+  BASE_URL: import.meta.env.VITE_API_URL,
   
   // Timeout para las requests
   TIMEOUT: 135000,
