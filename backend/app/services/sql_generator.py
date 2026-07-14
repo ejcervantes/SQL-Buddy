@@ -5,7 +5,7 @@ from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
 
 from app.config import settings
-from app.services.rag_chroma import RAGServiceChroma
+from app.services.rag_service import RAGServicePGVector
 
 class SQLResponse(BaseModel):
     """Define la estructura de la respuesta JSON que esperamos del LLM."""
@@ -17,7 +17,7 @@ class SQLGeneratorService:
     """
     Servicio para generar consultas SQL a partir de preguntas en lenguaje natural.
     """
-    def __init__(self, rag_service: RAGServiceChroma):
+    def __init__(self, rag_service: RAGServicePGVector):
         self.rag_service = rag_service
         self.llm = ChatOpenAI(model=settings.OPENAI_MODEL, temperature=0, openai_api_key=settings.OPENAI_API_KEY)
         self.parser = PydanticOutputParser(pydantic_object=SQLResponse)

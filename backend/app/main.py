@@ -1,13 +1,13 @@
 import os
 import json
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from app.config import settings
-from app.services.rag_chroma import RAGServiceChroma
+from app.services.rag_service import RAGServicePGVector
 from app.services.sql_generator import SQLGeneratorService
-from app.services.schema_introspector import fetch_schema_metadata
+from app.services.schema_introspector import fetch_schema_metadata, compute_schema_fingerprint
 
 # --- Modelos de Datos (Pydantic) ---
 
@@ -46,7 +46,7 @@ app.add_middleware(
 
 # --- Inicialización de Servicios ---
 
-rag_service = RAGServiceChroma()
+rag_service = RAGServicePGVector()
 sql_generator = SQLGeneratorService(rag_service)
 
 # --- Eventos de Ciclo de Vida ---
@@ -79,46 +79,75 @@ def _load_metadata_from_json() -> list:
         return json.load(f)
 
 
+def run_vector_sync(force: bool = False) -> dict:
+    """
+    Sincroniza la base vectorial (pgvector en Supabase) con el esquema actual.
+
+    Solo re-vectoriza si el esquema cambió (comparando el fingerprint), si aún no
+    existe base vectorial, o si se fuerza (force=True). En el caso normal (esquema
+    sin cambios) reutiliza los vectores persistidos en Supabase.
+
+    Devuelve un resumen de lo que ocurrió (útil para logs y para /resync).
+    """
+    # Fuente de verdad preferida: el esquema real de la base de datos.
+    # Si no hay conexión disponible, se recurre al JSON de respaldo.
+    seed_data = _load_metadata_from_db()
+    if seed_data is None:
+        seed_data = _load_metadata_from_json()
+
+    if not seed_data:
+        print("⚠️  Sin metadatos para vectorizar.")
+        return {"status": "no_metadata", "rebuilt": False, "tables": []}
+
+    fingerprint = compute_schema_fingerprint(seed_data)
+    stored_fingerprint = rag_service.get_stored_fingerprint()
+    up_to_date = stored_fingerprint == fingerprint and rag_service.has_vectors()
+
+    if up_to_date and not force:
+        print("✅ La base vectorial ya está al día (el esquema no cambió). No se re-vectoriza.")
+        return {"status": "up_to_date", "rebuilt": False, "tables": rag_service.get_available_tables()}
+
+    if force:
+        reason = "resync forzado"
+    elif not rag_service.has_vectors():
+        reason = "no existe base vectorial"
+    else:
+        reason = "el esquema cambió"
+
+    print(f"🔁 Reconstruyendo la base vectorial ({reason})...")
+    rag_service.rebuild(seed_data, fingerprint)
+    return {"status": "rebuilt", "reason": reason, "rebuilt": True, "tables": rag_service.get_available_tables()}
+
+
 @app.on_event("startup")
-async def load_seed_metadata():
-    print("🚀 Aplicación iniciada. Cargando metadatos iniciales...")
+async def sync_vector_store():
+    print("🚀 Aplicación iniciada. Sincronizando la base vectorial...")
     try:
-        # Fuente de verdad preferida: el esquema real de la base de datos.
-        # Si no hay conexión disponible, se recurre al JSON de respaldo.
-        seed_data = _load_metadata_from_db()
-        if seed_data is None:
-            seed_data = _load_metadata_from_json()
-
-        if not seed_data:
-            return
-
-        tables_loaded = 0
-        existing_tables = rag_service.get_available_tables()
-        print(f"ℹ️  Tablas existentes en la base vectorial: {existing_tables}")
-
-        for table_meta in seed_data:
-            if table_meta["table_name"] not in existing_tables:
-                success = rag_service.add_table_metadata(
-                    table_name=table_meta["table_name"],
-                    schema_info=table_meta["schema_info"],
-                    description=table_meta["description"]
-                )
-                if success:
-                    tables_loaded += 1
-        
-        if tables_loaded > 0:
-            print(f"✅ Se sembraron exitosamente los metadatos de {tables_loaded} nuevas tablas.")
-        else:
-            print("ℹ️  No se sembraron nuevas tablas (todas las tablas del seed ya existían).")
-
+        result = run_vector_sync(force=False)
+        print(f"ℹ️  Sincronización: {result['status']} ({len(result['tables'])} tablas).")
     except Exception as e:
-        print(f"❌ Error crítico al cargar metadatos iniciales: {e}")
+        print(f"❌ Error crítico al sincronizar la base vectorial: {e}")
 
 # --- Endpoints de la API ---
 
 @app.get("/")
 def read_root():
     return {"message": "Bienvenido a SQL Query Buddy API"}
+
+@app.post("/resync", tags=["RAG"])
+def resync_vector_store(x_resync_token: str | None = Header(default=None)):
+    """
+    Fuerza la re-vectorización del esquema sin reiniciar el servicio.
+
+    Si RESYNC_TOKEN está configurado, exige el header 'X-Resync-Token' con ese valor
+    (evita que cualquiera dispare re-embeddings). Si no está configurado, queda abierto.
+    """
+    if settings.RESYNC_TOKEN and x_resync_token != settings.RESYNC_TOKEN:
+        raise HTTPException(status_code=401, detail="Token de resync inválido o ausente.")
+    try:
+        return run_vector_sync(force=True)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al re-sincronizar la base vectorial: {e}")
 
 @app.get("/health", response_model=HealthCheckResponse)
 async def health_check():

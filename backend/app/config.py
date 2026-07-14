@@ -6,12 +6,14 @@ load_dotenv()
 class Settings:
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
     OPENAI_MODEL: str = os.getenv("OPENAI_MODEL", "gpt-4")
-    CHROMA_PERSIST_DIRECTORY: str = os.getenv("CHROMA_PERSIST_DIRECTORY", "./chroma_db")
-    # Cadena de conexión a Postgres para introspectar el esquema en vivo.
-    # Si está vacía, la app usa metadata_seed.json como respaldo.
+    # Conexión a Postgres/Supabase. Es la fuente del esquema (introspección) y
+    # también donde se almacena la base vectorial (pgvector). Obligatoria.
     DATABASE_URL: str = os.getenv("DATABASE_URL", "")
     # Esquema de Postgres a introspectar (normalmente "public").
     DB_SCHEMA: str = os.getenv("DB_SCHEMA", "public")
+    # Token opcional para proteger el endpoint POST /resync. Si está vacío, el
+    # endpoint queda abierto (útil en desarrollo).
+    RESYNC_TOKEN: str = os.getenv("RESYNC_TOKEN", "")
     PORT: int = int(os.getenv("PORT", "8000"))
     HOST: str = os.getenv("HOST", "0.0.0.0")
     ALLOWED_ORIGINS: list = os.getenv("ALLOWED_ORIGINS", "*").split(',') if os.getenv("ALLOWED_ORIGINS") != "*" else ["*"]

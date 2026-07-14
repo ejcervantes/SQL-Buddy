@@ -22,7 +22,7 @@ You can interact with the deployed application directly through the following li
 ## 📝 Description
 
 - **Intelligent SQL Generation**: Converts natural language questions into SQL queries.
-- **RAG System**: Introspects the database schema live (via `information_schema`) to load table schemas into a vector database, providing precise context to the LLM. Falls back to a seed JSON file when no database connection is configured.
+- **RAG System**: Introspects the database schema live (via `information_schema`) and stores the embeddings in PostgreSQL using the `pgvector` extension (in the same Supabase project), so the vector store is persistent and free. On startup it compares a fingerprint (hash) of the schema and only re-vectorizes when the structure actually changes.
 - **Question Analysis**: Offers an explanation of the generated query and suggests possible optimizations.
 - **Modern Web Interface**: Frontend built with React and Vite, with a clean and responsive design.
 - **REST API**: Backend developed with FastAPI that exposes clear and documented endpoints.
@@ -32,23 +32,24 @@ You can interact with the deployed application directly through the following li
 - **Frontend**: React + Vite
 - **Backend**: FastAPI + Python
 - **LLM**: OpenAI GPT-4
-- **Vector Database**: ChromaDB
-- **Database**: SupaBase (PostgreSQL)
-- **Deployment**: Cloudflare Pages (Frontend) + Render (Backend)
+- **Vector Store**: PostgreSQL + pgvector (stored in Supabase)
+- **Database**: Supabase (PostgreSQL)
+- **Deployment**: Static hosting (Cloudflare Pages / Hostinger) for the frontend + Render for the backend
 
 ## 🚀 Deployment
 
-The deployment architecture is designed to optimize performance and facilitate management by separating the static frontend from the dynamic backend.
+The deployment architecture separates the static frontend from the dynamic backend, each deployed independently.
 
-### Frontend on Cloudflare Pages
-The React frontend is deployed on Cloudflare Pages. This service is optimized for serving static sites at high speed through its global content delivery network (CDN). It integrates directly with the GitHub repository, automatically deploying each new change on the main branch.
+### Frontend (static hosting)
+The React frontend is built with Vite and deployed as a static site (e.g., Cloudflare Pages or Hostinger). Set the build-time environment variables: `VITE_API_URL` (the backend URL), `VITE_SUPABASE_URL`, and `VITE_SUPABASE_ANON_KEY`.
 
 ### Backend on Render
-The FastAPI backend is packaged in a Docker container and deployed on Render. This platform is ideal for containerized web services, automatically managing scaling, SSL certificates, and environment variables. The service is configured to run from the backend/ directory of the repository.
+The FastAPI backend is packaged in a Docker container (`backend/Dockerfile`) and deployed on Render. Required environment variables: `OPENAI_API_KEY` and `DATABASE_URL` (the Supabase connection string; use the **Session pooler** URL). Enable the `vector` extension in Supabase beforehand. On first run the backend creates the pgvector tables and a small `rag_schema_meta` table automatically, and seeds the vector store from the live schema.
 
 ## 📚 API Endpoints
 
 - `GET /` - Root endpoint that returns a welcome message. Useful for verifying that the API is running.
-- `GET /health` - Provides a system health check, verifying the status of critical services like the connection to the vector database.
+- `GET /health` - Provides a system health check, verifying the status of critical services like OpenAI and the pgvector store.
 - `POST /ask` - This is the main endpoint. It receives a question in natural language and returns the generated SQL query.
-- `GET /tables` - Returns a list of all tables whose metadata is currently loaded into the vector database.
+- `GET /tables` - Returns a list of all tables whose metadata is currently loaded into the vector store.
+- `POST /resync` - Forces re-vectorization of the schema without restarting the service. Optionally protected by the `X-Resync-Token` header (when `RESYNC_TOKEN` is set).

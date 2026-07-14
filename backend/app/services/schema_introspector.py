@@ -11,9 +11,38 @@ dinámica, la misma estructura de metadatos que consume el servicio RAG:
 De esta manera la base de datos es la única fuente de verdad del esquema.
 """
 
+import hashlib
+import json
+
 import psycopg2
 
 from app.config import settings
+
+# Tablas internas creadas por el propio backend (pgvector + fingerprint).
+# Se excluyen de la introspección para no vectorizarlas como si fueran datos.
+_EXCLUDED_TABLES = ("langchain_pg_collection", "langchain_pg_embedding", "rag_schema_meta")
+
+
+def compute_schema_fingerprint(metadata: list[dict]) -> str:
+    """
+    Calcula un hash estable del esquema (independiente del orden de las tablas).
+
+    Se usa para detectar cambios en la estructura de la base original: si el
+    fingerprint cambia respecto al guardado, hay que re-vectorizar.
+    """
+    normalized = sorted(
+        (
+            {
+                "table_name": m["table_name"],
+                "schema_info": m["schema_info"],
+                "description": m["description"],
+            }
+            for m in metadata
+        ),
+        key=lambda m: m["table_name"],
+    )
+    blob = json.dumps(normalized, sort_keys=True, ensure_ascii=False)
+    return hashlib.sha256(blob.encode("utf-8")).hexdigest()
 
 
 def _format_column_type(col: dict) -> str:
@@ -84,9 +113,10 @@ def fetch_schema_metadata() -> list[dict]:
                  AND t.table_name = c.table_name
                 WHERE c.table_schema = %s
                   AND t.table_type = 'BASE TABLE'
+                  AND c.table_name NOT IN %s
                 ORDER BY c.table_name, c.ordinal_position
                 """,
-                (schema,),
+                (schema, _EXCLUDED_TABLES),
             )
             columns_by_table: dict[str, list] = {}
             for row in cur.fetchall():

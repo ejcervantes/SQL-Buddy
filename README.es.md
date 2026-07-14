@@ -22,7 +22,7 @@ Puedes interactuar con la aplicación desplegada directamente a través de los s
 ## 📝 Descripción
 
 - **Generación de SQL Inteligente**: Convierte preguntas en lenguaje natural a consultas SQL
-- **Sistema RAG**: Introspecta el esquema de la base de datos en vivo (vía `information_schema`) para cargar los esquemas de las tablas en una base de datos vectorial, proporcionando un contexto preciso al LLM. Si no hay conexión a la base de datos configurada, recurre a un archivo JSON de respaldo.
+- **Sistema RAG**: Introspecta el esquema de la base de datos en vivo (vía `information_schema`) y almacena los embeddings en PostgreSQL usando la extensión `pgvector` (en el mismo proyecto de Supabase), de modo que la base vectorial es persistente y gratuita. Al arrancar compara un fingerprint (hash) del esquema y solo re-vectoriza cuando la estructura realmente cambia.
 - **Análisis de Consultas**: Ofrece una explicación de la consulta generada y sugiere posibles optimizaciones.
 - **Interfaz Web Moderna**: Frontend construido con React y Vite, con un diseño limpio y responsive.
 - **API REST**: Backend desarrollado con FastAPI que expone endpoints claros y está documentado.
@@ -32,23 +32,24 @@ Puedes interactuar con la aplicación desplegada directamente a través de los s
 - **Frontend**: React + Vite
 - **Backend**: FastAPI + Python
 - **LLM**: OpenAI GPT-4
-- **Base Vectorial**: ChromaDB
-- **Base de Datos**: SupaBase (PostgreSQL)
-- **Despliegue**: Cloudflare Pages (Frontend) + Render (Backend)
+- **Base Vectorial**: PostgreSQL + pgvector (almacenada en Supabase)
+- **Base de Datos**: Supabase (PostgreSQL)
+- **Despliegue**: Hosting estático (Cloudflare Pages / Hostinger) para el frontend + Render para el backend
 
 ## 🚀 Despliegue
 
-La arquitectura de despliegue está diseñada para optimizar el rendimiento y facilitar la gestión, separando el frontend estático del backend dinámico.
+La arquitectura de despliegue separa el frontend estático del backend dinámico, cada uno desplegado de forma independiente.
 
-### Frontend en Cloudflare Pages
-El frontend de React se despliega en Cloudflare Pages. Este servicio está optimizado para servir sitios estáticos a alta velocidad a través de su red de distribución de contenido (CDN) global. Se integra directamente con el repositorio de GitHub, desplegando automáticamente cada nuevo cambio en la rama principal.
+### Frontend (hosting estático)
+El frontend de React se compila con Vite y se despliega como sitio estático (ej. Cloudflare Pages o Hostinger). Define las variables de entorno de build: `VITE_API_URL` (la URL del backend), `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`.
 
 ### Backend en Render
-El backend de FastAPI está empaquetado en un contenedor Docker y desplegado en Render. Esta plataforma es ideal para servicios web en contenedores, gestionando automáticamente el escalado, los certificados SSL y las variables de entorno. El servicio se configura para ejecutarse desde el directorio backend/ del repositorio.
+El backend de FastAPI está empaquetado en un contenedor Docker (`backend/Dockerfile`) y desplegado en Render. Variables de entorno requeridas: `OPENAI_API_KEY` y `DATABASE_URL` (la cadena de conexión de Supabase; usa la URL del **Session pooler**). Habilita la extensión `vector` en Supabase de antemano. En el primer arranque el backend crea automáticamente las tablas de pgvector y una tabla `rag_schema_meta`, y siembra la base vectorial desde el esquema en vivo.
 
 ## 📚 API Endpoints
 
 - `GET /` - Endpoint raíz que devuelve un mensaje de bienvenida. Útil para verificar que la API está en funcionamiento.
-- `GET /health` - Proporciona un chequeo de salud del sistema, verificando el estado de servicios críticos como la conexión con la base de datos vectorial.
+- `GET /health` - Proporciona un chequeo de salud del sistema, verificando el estado de servicios críticos como OpenAI y la base vectorial pgvector.
 - `POST /ask` - Es el endpoint principal. Recibe una pregunta en lenguaje natural y devuelve la consulta SQL generada.
-- `GET /tables` - Devuelve una lista de todas las tablas cuyos metadatos están actualmente cargados en la base de datos vectorial.
+- `GET /tables` - Devuelve una lista de todas las tablas cuyos metadatos están actualmente cargados en la base vectorial.
+- `POST /resync` - Fuerza la re-vectorización del esquema sin reiniciar el servicio. Opcionalmente protegido con el header `X-Resync-Token` (cuando `RESYNC_TOKEN` está configurado).
